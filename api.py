@@ -49,7 +49,9 @@ async def get_top_10_popular(category: Optional[str] = None, id: Optional[int] =
     filtered_data = filtered_data[~filtered_data['Images'].str.contains('0')]
 
     def extract_first_image_url(image_col):
-        urls = re.findall(r'https?://[-\w@:%._\+~#=]+(?:\.jpg|\.png)', image_col)
+        # urls = re.findall(r'https?://[-\w@:%._\+~#=]+(?:\.jpg|\.png)', image_col)
+        # urls = re.findall(r'\"https?://.+(?:\.jpg|\.png)\"', image_col.lower())
+        urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', image_col.lower())
         return urls[0] if urls else None
 
     filtered_data['first_image_url'] = filtered_data['Images'].apply(extract_first_image_url)
@@ -58,7 +60,8 @@ async def get_top_10_popular(category: Optional[str] = None, id: Optional[int] =
     sorted_data = filtered_data.sort_values('ReviewCount', ascending=False)
 
     # Select the top 10 rows
-    top_10 = sorted_data.head(9)
+    top_10 = sorted_data.head(6)
+    print(top_10['Images'])
 
     # Return the top 10 rows as a list of dictionaries
     return top_10.to_dict(orient='records')

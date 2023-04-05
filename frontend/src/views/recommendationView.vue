@@ -52,8 +52,7 @@
                   <v-img
                       cover
                       height="250"
-                      v-if="item.firstImageUrl"
-                      :src="item.firstImageUrl"
+                      :src="item.first_image_url"
                       lazy-src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
 
                   ></v-img>
@@ -97,9 +96,9 @@
                       {{ item.RecipeCategory }}
                     </div>
 
-                    <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio
-                      seating.
-                    </div>
+<!--                    <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio-->
+<!--                      seating.-->
+<!--                    </div>-->
                   </v-card-text>
                 </v-card>
 

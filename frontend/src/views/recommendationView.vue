@@ -4,13 +4,21 @@
       <v-col cols="2">
         <v-sheet rounded="lg">
           <v-list rounded="lg">
+            <v-list-subheader>Category</v-list-subheader>
+
 
             <v-list-item
-                v-for="category in categories"
-                :key="category"
+                v-for="(category,i) in categories"
+                :key="i"
+                :value="category"
+                active-color="primary"
+                rounded="shaped"
+                @click="clickCategory(category)"
+
                 link
             >
               <v-list-item-title>
+
                 {{ category }}
               </v-list-item-title>
             </v-list-item>
@@ -36,9 +44,9 @@
         >
           <v-container>
             <v-row>
-              <v-col v-for="(item, index) in displayedItems" :key="index" cols="12" sm="6" md="4">
+              <v-col v-for="(item, index) in recipes" :key="index" cols="12" sm="6" md="4">
                 <v-card
-                    :loading="true"
+                    :loading="false"
                     class="mx-auto "
                     max-width="374"
                 >
@@ -54,14 +62,19 @@
                   <v-img
                       cover
                       height="250"
-                      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                      v-if="item.firstImageUrl"
+                      :src="item.firstImageUrl"
+                      lazy-src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+
                   ></v-img>
 
+
                   <v-card-item>
-                    <v-card-title>Cafe Badilico</v-card-title>
+                    <v-card-title>{{ item.Name }}</v-card-title>
 
                     <v-card-subtitle>
-                      <span class="me-1">Local Favorite</span>
+                      <span class="me-1">  Calories: {{ item.Calories }} </span>
+                      <!--                      <span class="me-1"> {{item.RecipeCategory}} </span>-->
 
                       <v-icon
                           color="error"
@@ -77,7 +90,7 @@
                         class="mx-0"
                     >
                       <v-rating
-                          :model-value="4.5"
+                          v-model="item.AggregatedRating"
                           color="amber"
                           density="compact"
                           half-increments
@@ -86,27 +99,27 @@
                       ></v-rating>
 
                       <div class="text-grey ms-4">
-                        4.5 (413)
+                        {{ item.AggregatedRating }} ({{ item.ReviewCount }})
                       </div>
                     </v-row>
 
                     <div class="my-4 text-subtitle-1">
-                      $ • Italian, Cafe
+                      {{ item.RecipeCategory }}
                     </div>
 
-                    <!--                    <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio-->
-                    <!--                      seating.-->
-                    <!--                    </div>-->
+                    <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio
+                      seating.
+                    </div>
                   </v-card-text>
                 </v-card>
 
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12">
-                <v-pagination v-model="currentPage" :length="pageCount" @input="updateDisplayedItems"/>
-              </v-col>
-            </v-row>
+            <!--            <v-row>-->
+            <!--              <v-col cols="12">-->
+            <!--                <v-pagination v-model="currentPage" :length="pageCount" @input="updateDisplayedItems"/>-->
+            <!--              </v-col>-->
+            <!--            </v-row>-->
           </v-container>
 
         </v-sheet>
@@ -116,7 +129,7 @@
 </template>
 
 <script setup>
-import {reactive, computed} from 'vue';
+import {reactive, computed, ref} from 'vue';
 import {useQuery} from "@tanstack/vue-query";
 import axios from "axios";
 
@@ -124,18 +137,43 @@ import axios from "axios";
 const state = reactive({
   items: [
     // Your card data here
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
+
   ],
   pageSize: 6,
   currentPage: 1
 });
+const selectedCategory = ref("");
+
+const {data: recipes = [], status, refetch} = useQuery(['recipes'], async () => {
+  // if (selectedCategory.value) {
+  //   const response = await axios.get('/recipes/?category=' + selectedCategory.value);
+  //
+  // } else {
+  //   const response = await axios.get('/recipes/');
+  //
+  // }
+  selectedCategory.value ? selectedCategory.value : ''
+  const response = await axios.get('/recipes/?category=' + selectedCategory.value);
+
+
+  // eslint-disable-next-line no-undef
+  const recipesWithFirstImageUrl = response.data.map(recipe => {
+    // const firstImageUrl = recipe.Images.match("/https://S+/")[0];
+    // const imagesJson = recipe.Images.substring(2, recipe.Images.length - 2)
+    // const firstImageUrl = imagesJson.split('","')[0];
+    // const images = JSON.parse(`[${recipe.Images}]`); // convert Images string to an array
+    // const imagesArray = JSON.parse(recipe.Images.replace(/c\((.*)\)/, '[$1]'));
+    // const firstImageUrl = imagesArray[0];
+    // console.log(firstImageUrl)
+    // console.log(firstImageUrl)
+    return {...recipe};
+  });
+  return recipesWithFirstImageUrl
+})
+const clickCategory = (category) => {
+  selectedCategory.value = category;
+  refetch();
+}
 
 const pageCount = computed(() => {
   return Math.ceil(state.items.length / state.pageSize);
@@ -150,7 +188,7 @@ const displayedItems = computed(() => {
 const updateDisplayedItems = () => {
   const startIndex = (state.currentPage - 1) * state.pageSize;
   const endIndex = startIndex + state.pageSize;
-  state.displayedItems = state.items.slice(startIndex, endIndex);
+  // state.displayedItems = state.items.slice(startIndex, endIndex);
 };
 
 const {isLoading, data: categories} = useQuery(['top-categories'], async () => {

@@ -23,16 +23,6 @@
               </v-list-item-title>
             </v-list-item>
 
-            <!--            <v-divider class="my-2"></v-divider>-->
-
-            <!--            <v-list-item-->
-            <!--                link-->
-            <!--                color="grey-lighten-4"-->
-            <!--            >-->
-            <!--              <v-list-item-title>-->
-            <!--                Refresh-->
-            <!--              </v-list-item-title>-->
-            <!--            </v-list-item>-->
           </v-list>
         </v-sheet>
       </v-col>
@@ -115,11 +105,7 @@
 
               </v-col>
             </v-row>
-            <!--            <v-row>-->
-            <!--              <v-col cols="12">-->
-            <!--                <v-pagination v-model="currentPage" :length="pageCount" @input="updateDisplayedItems"/>-->
-            <!--              </v-col>-->
-            <!--            </v-row>-->
+
           </v-container>
 
         </v-sheet>
@@ -142,30 +128,16 @@ const state = reactive({
   pageSize: 6,
   currentPage: 1
 });
-const selectedCategory = ref("");
+const selectedCategory = ref("All");
 
 const {data: recipes = [], status, refetch} = useQuery(['recipes'], async () => {
-  // if (selectedCategory.value) {
-  //   const response = await axios.get('/recipes/?category=' + selectedCategory.value);
-  //
-  // } else {
-  //   const response = await axios.get('/recipes/');
-  //
-  // }
-  selectedCategory.value ? selectedCategory.value : ''
-  const response = await axios.get('/recipes/?category=' + selectedCategory.value);
+
+  const req = selectedCategory.value === "All" ? "" : selectedCategory.value;
+  const response = await axios.get('/recipes/?category=' + req);
 
 
-  // eslint-disable-next-line no-undef
   const recipesWithFirstImageUrl = response.data.map(recipe => {
-    // const firstImageUrl = recipe.Images.match("/https://S+/")[0];
-    // const imagesJson = recipe.Images.substring(2, recipe.Images.length - 2)
-    // const firstImageUrl = imagesJson.split('","')[0];
-    // const images = JSON.parse(`[${recipe.Images}]`); // convert Images string to an array
-    // const imagesArray = JSON.parse(recipe.Images.replace(/c\((.*)\)/, '[$1]'));
-    // const firstImageUrl = imagesArray[0];
-    // console.log(firstImageUrl)
-    // console.log(firstImageUrl)
+
     return {...recipe};
   });
   return recipesWithFirstImageUrl
@@ -175,24 +147,11 @@ const clickCategory = (category) => {
   refetch();
 }
 
-const pageCount = computed(() => {
-  return Math.ceil(state.items.length / state.pageSize);
-});
-
-const displayedItems = computed(() => {
-  const startIndex = (state.currentPage - 1) * state.pageSize;
-  const endIndex = startIndex + state.pageSize;
-  return state.items.slice(startIndex, endIndex);
-});
-
-const updateDisplayedItems = () => {
-  const startIndex = (state.currentPage - 1) * state.pageSize;
-  const endIndex = startIndex + state.pageSize;
-  // state.displayedItems = state.items.slice(startIndex, endIndex);
-};
 
 const {isLoading, data: categories} = useQuery(['top-categories'], async () => {
   const response = await axios.get("/top_categories");
+  response.data.top_categories.unshift('All');
+
   return response.data.top_categories;
 });
 </script>

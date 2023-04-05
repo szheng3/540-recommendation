@@ -4,13 +4,14 @@
       <v-col cols="2">
         <v-sheet rounded="lg">
           <v-list rounded="lg">
+
             <v-list-item
-                v-for="n in 5"
-                :key="n"
+                v-for="category in categories"
+                :key="category"
                 link
             >
               <v-list-item-title>
-                List Item {{ n }}
+                {{ category }}
               </v-list-item-title>
             </v-list-item>
 
@@ -116,6 +117,8 @@
 
 <script setup>
 import {reactive, computed} from 'vue';
+import {useQuery} from "@tanstack/vue-query";
+import axios from "axios";
 
 
 const state = reactive({
@@ -149,4 +152,9 @@ const updateDisplayedItems = () => {
   const endIndex = startIndex + state.pageSize;
   state.displayedItems = state.items.slice(startIndex, endIndex);
 };
+
+const {isLoading, data: categories} = useQuery(['top-categories'], async () => {
+  const response = await axios.get("/top_categories");
+  return response.data.top_categories;
+});
 </script>

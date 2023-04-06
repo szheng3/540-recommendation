@@ -6,86 +6,75 @@
           <v-list rounded="lg">
             <v-list-subheader>Category</v-list-subheader>
 
-
             <v-list-item
-                v-for="(category,i) in categories"
-                :key="i"
-                :value="category"
-                active-color="primary"
-                rounded="shaped"
-                @click="clickCategory(category)"
-
-                link
+              v-for="(category, i) in categories"
+              :key="i"
+              :value="category"
+              active-color="primary"
+              rounded="shaped"
+              @click="clickCategory(category)"
+              link
             >
               <v-list-item-title>
-
                 {{ category }}
               </v-list-item-title>
             </v-list-item>
-
           </v-list>
         </v-sheet>
       </v-col>
 
       <v-col>
-        <v-sheet
-            min-height="70vh"
-            rounded="lg"
-        >
+        <v-sheet min-height="70vh" rounded="lg">
           <v-container>
             <v-row>
-              <v-col v-for="(item, index) in recipes" :key="index" cols="12" sm="6" md="4">
-
-                <v-card
-                    :loading="false"
-                    class="mx-auto "
-                    max-width="374"
-                >
+              <v-col
+                v-for="(item, index) in recipes"
+                :key="index"
+                cols="12"
+                sm="6"
+                md="4"
+              >
+                <v-card :loading="false" class="mx-auto" max-width="374">
                   <template v-slot:loader="{ isActive }">
                     <v-progress-linear
-                        :active="isActive"
-                        color="deep-purple"
-                        height="4"
-                        indeterminate
+                      :active="isActive"
+                      color="deep-purple"
+                      height="4"
+                      indeterminate
                     ></v-progress-linear>
                   </template>
 
                   <v-img
-                      cover
-                      height="250"
-                      :src="item.first_image_url"
-                      lazy-src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-
+                    cover
+                    height="250"
+                    :src="item.first_image_url"
+                    lazy-src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
                   ></v-img>
-
 
                   <v-card-item>
                     <v-card-title>{{ item.Name }}</v-card-title>
 
                     <v-card-subtitle>
-                      <span class="me-1">  Calories: {{ item.Calories }} </span>
+                      <span class="me-1"> Calories: {{ item.Calories }} </span>
                       <!--                      <span class="me-1"> {{item.RecipeCategory}} </span>-->
 
                       <v-icon
-                          color="error"
-                          icon="mdi-fire-circle"
-                          size="small"
+                        color="error"
+                        icon="mdi-fire-circle"
+                        size="small"
                       ></v-icon>
                     </v-card-subtitle>
                   </v-card-item>
 
                   <v-card-text>
-                    <v-row
-                        align="center"
-                        class="mx-0"
-                    >
+                    <v-row align="center" class="mx-0">
                       <v-rating
-                          v-model="item.AggregatedRating"
-                          color="amber"
-                          density="compact"
-                          half-increments
-                          readonly
-                          size="small"
+                        v-model="item.AggregatedRating"
+                        color="amber"
+                        density="compact"
+                        half-increments
+                        readonly
+                        size="small"
                       ></v-rating>
 
                       <div class="text-grey ms-4">
@@ -102,12 +91,9 @@
                     <!--                    </div>-->
                   </v-card-text>
                 </v-card>
-
               </v-col>
             </v-row>
-
           </v-container>
-
         </v-sheet>
       </v-col>
     </v-row>
@@ -115,43 +101,37 @@
 </template>
 
 <script setup>
-import {reactive, computed, ref} from 'vue';
-import {useQuery} from "@tanstack/vue-query";
+import { reactive, computed, ref } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
 
-
-const state = reactive({
-  items: [
-    // Your card data here
-
-  ],
-  pageSize: 6,
-  currentPage: 1
-});
 const selectedCategory = ref("All");
 
-const {data: recipes = [], status, refetch} = useQuery(['recipes'], async () => {
-
+const {
+  data: recipes = [],
+  status,
+  refetch,
+} = useQuery(["recipes"], async () => {
   const req = selectedCategory.value === "All" ? "" : selectedCategory.value;
-  const response = await axios.get('/recipes/?category=' + req);
+  const response = await axios.get("/recipes/?category=" + req);
 
-
-  const recipesWithFirstImageUrl = response.data.map(recipe => {
-
-    return {...recipe};
+  const recipesWithFirstImageUrl = response.data.map((recipe) => {
+    return { ...recipe };
   });
-  return recipesWithFirstImageUrl
-})
+  return recipesWithFirstImageUrl;
+});
 const clickCategory = (category) => {
   selectedCategory.value = category;
   refetch();
-}
+};
 
+const { isLoading, data: categories } = useQuery(
+  ["top-categories"],
+  async () => {
+    const response = await axios.get("/top_categories");
+    response.data.top_categories.unshift("All");
 
-const {isLoading, data: categories} = useQuery(['top-categories'], async () => {
-  const response = await axios.get("/top_categories");
-  response.data.top_categories.unshift('All');
-
-  return response.data.top_categories;
-});
+    return response.data.top_categories;
+  }
+);
 </script>

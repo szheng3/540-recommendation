@@ -24,12 +24,10 @@
 <!--});-->
 <!--</script>-->
 <script setup>
-import {usePostsV3} from "@/stores/usePostsV3";
-import {useQuery} from "@tanstack/vue-query";
+import { usePostsV3 } from "@/stores/usePostsV3";
+import { useQuery } from "@tanstack/vue-query";
 
 const store = usePostsV3();
 
-const {isLoading} = useQuery(
-    ["posts3"],
-    store.fetchPosts);
+const { isLoading } = useQuery(["posts3"], store.fetchPosts);
 </script>

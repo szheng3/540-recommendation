@@ -1,59 +1,49 @@
 <script setup lang="ts">
-import {RouterView} from 'vue-router'
-import {reactive, ref} from "vue";
-import {useRouter} from 'vue-router'
+import { RouterView } from "vue-router";
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const state = reactive({
   showModal: false,
-  username: '',
-  userId: '',
+  username: "",
+  userId: "",
   users: [
-    {id: 1, username: 'user1'},
-    {id: 2, username: 'user2'},
-    {id: 3, username: 'user3'},
+    { id: 1, username: "user1" },
+    { id: 2, username: "user2" },
+    { id: 3, username: "user3" },
   ],
   selectedUser: null,
 });
-const links = ref([
-  'Login',
-]);
+const links = ref(["Login"]);
 
-const router = useRouter()
+const router = useRouter();
 
 const goToDashboard = (link: string) => {
   switch (link) {
-    case 'Login':
+    case "Login":
       state.showModal = true;
       // router.push('/')
       break;
-      // case 'ONNX':
-      //   router.push('/onnx')
-      //   break;
+    // case 'ONNX':
+    //   router.push('/onnx')
+    //   break;
     default:
-      router.push('/')
+      router.push("/");
   }
-}
-
-
+};
 </script>
-
 
 <template>
   <v-app>
-
     <v-app-bar flat>
       <v-container class="fill-height d-flex align-center">
-        <v-avatar
-            class="me-10 ms-4"
-            color="grey-darken-1"
-            size="32"
-        ></v-avatar>
+        <v-avatar class="me-10 ms-4" color="grey-darken-1" size="32"></v-avatar>
 
         <v-btn
-            v-for="link in links"
-            :key="link"
-            @click="goToDashboard(link)"
-            variant="text"
+          v-for="link in links"
+          :key="link"
+          @click="goToDashboard(link)"
+          variant="text"
         >
           {{ link }}
         </v-btn>
@@ -61,24 +51,31 @@ const goToDashboard = (link: string) => {
         <v-spacer></v-spacer>
 
         <v-responsive max-width="80">
-          <v-btn>
-            Likes
-          </v-btn>
-
+          <v-btn> Likes </v-btn>
         </v-responsive>
       </v-container>
     </v-app-bar>
-    <notifications class="mt-10 mr-16"/>
+    <notifications class="mt-10 mr-16" />
 
     <v-main class="bg-grey-lighten-4">
       <v-dialog v-model="state.showModal" max-width="400px">
         <v-card>
           <v-card-title>Log In</v-card-title>
           <v-card-text>
-            <v-select v-model="state.selectedUser" :items="state.users" label="Select user" item-title="username"
-                      item-value="id"></v-select>
+            <v-select
+              v-model="state.selectedUser"
+              :items="state.users"
+              label="Select user"
+              item-title="username"
+              item-value="id"
+            ></v-select>
 
-            <v-text-field v-show="false" type="hidden" v-model="state.userId" style="display: none;"></v-text-field>
+            <v-text-field
+              v-show="false"
+              type="hidden"
+              v-model="state.userId"
+              style="display: none"
+            ></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="state.showModal = false">Cancel</v-btn>
@@ -86,19 +83,12 @@ const goToDashboard = (link: string) => {
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <RouterView/>
-
+      <RouterView />
     </v-main>
-    <v-footer
-        absolute
-        class=" text-center d-flex flex-column"
-        flat
-    >
-
+    <v-footer absolute class="text-center d-flex flex-column" flat>
       <div class="text-caption">
         This project aims to show demo for recommendation system.
       </div>
-
 
       <div class="text-caption">
         {{ new Date().getFullYear() }} —Shuai, Iqra, Yiyun

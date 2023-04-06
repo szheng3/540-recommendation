@@ -39,6 +39,14 @@ async def get_top_categories():
     return {'top_categories': top_categories}
 
 
+@app.get('/author')
+async def get_author():
+    top_authors = reviews_df[["AuthorId", "AuthorName"]].drop_duplicates().head(10)
+    top_authors_list = top_authors.to_dict(orient="records")
+
+    return {'top_authors': top_authors_list}
+
+
 @app.get("/recipes")
 async def get_top_10_popular(category: Optional[str] = None, id: Optional[int] = None):
     # Filter by category if provided

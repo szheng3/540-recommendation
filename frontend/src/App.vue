@@ -1,35 +1,57 @@
-<script setup lang="ts">
-import { RouterView } from "vue-router";
-import { reactive, ref } from "vue";
-import { useRouter } from "vue-router";
+<script setup>
+import {RouterView} from "vue-router";
+import {computed, reactive, ref} from "vue";
+import {useRouter} from "vue-router";
+import {useQuery} from "@tanstack/vue-query";
+import axios from "axios";
 
 const state = reactive({
   showModal: false,
   username: "",
   userId: "",
-  users: [
-    { id: 1, username: "user1" },
-    { id: 2, username: "user2" },
-    { id: 3, username: "user3" },
-  ],
   selectedUser: null,
+  selectedName: null,
 });
 const links = ref(["Login"]);
 
+const getUserInitials = computed(() => {
+  if (!state.selectedName) return '';
+  const nameParts = state.selectedName.split(' ');
+  return nameParts.map(part => part.charAt(0).toUpperCase()).join('');
+});
+
+
+const {isLoading, data: users} = useQuery(
+    ["author"],
+    async () => {
+      const response = await axios.get("/author");
+
+      return response.data.top_authors;
+    }
+);
+
+
 const router = useRouter();
 
-const goToDashboard = (link: string) => {
+const goToDashboard = (link) => {
   switch (link) {
     case "Login":
       state.showModal = true;
       // router.push('/')
       break;
-    // case 'ONNX':
-    //   router.push('/onnx')
-    //   break;
+      // case 'ONNX':
+      //   router.push('/onnx')
+      //   break;
     default:
       router.push("/");
   }
+};
+
+const login = () => {
+  console.log(state.selectedUser);
+  state.selectedName = users.value.find((user) => user.AuthorId === state.selectedUser).AuthorName;
+  state.showModal = false;
+
 };
 </script>
 
@@ -37,13 +59,16 @@ const goToDashboard = (link: string) => {
   <v-app>
     <v-app-bar flat>
       <v-container class="fill-height d-flex align-center">
-        <v-avatar class="me-10 ms-4" color="grey-darken-1" size="32"></v-avatar>
+        <v-avatar class="me-10 ms-4" color="grey-darken-1" size="32">
+          <span class="text-h7">{{ getUserInitials }}</span>
+
+        </v-avatar>
 
         <v-btn
-          v-for="link in links"
-          :key="link"
-          @click="goToDashboard(link)"
-          variant="text"
+            v-for="link in links"
+            :key="link"
+            @click="goToDashboard(link)"
+            variant="text"
         >
           {{ link }}
         </v-btn>
@@ -51,39 +76,39 @@ const goToDashboard = (link: string) => {
         <v-spacer></v-spacer>
 
         <v-responsive max-width="80">
-          <v-btn> Likes </v-btn>
+          <v-btn> Likes</v-btn>
         </v-responsive>
       </v-container>
     </v-app-bar>
-    <notifications class="mt-10 mr-16" />
+    <notifications class="mt-10 mr-16"/>
 
     <v-main class="bg-grey-lighten-4">
       <v-dialog v-model="state.showModal" max-width="400px">
         <v-card>
-          <v-card-title>Log In</v-card-title>
+          <v-card-title>Log In {{ selectedUserTitle }}</v-card-title>
           <v-card-text>
             <v-select
-              v-model="state.selectedUser"
-              :items="state.users"
-              label="Select user"
-              item-title="username"
-              item-value="id"
+                v-model="state.selectedUser"
+                :items="users"
+                label="Select user"
+                item-title="AuthorName"
+                item-value="AuthorId"
             ></v-select>
 
             <v-text-field
-              v-show="false"
-              type="hidden"
-              v-model="state.userId"
-              style="display: none"
+                v-show="false"
+                type="hidden"
+                v-model="state.userId"
+                style="display: none"
             ></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="state.showModal = false">Cancel</v-btn>
-            <v-btn color="primary" @click="state.login">Log In</v-btn>
+            <v-btn color="primary" @click="login()">Log In</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <RouterView />
+      <RouterView/>
     </v-main>
     <v-footer absolute class="text-center d-flex flex-column" flat>
       <div class="text-caption">
@@ -97,66 +122,3 @@ const goToDashboard = (link: string) => {
   </v-app>
 </template>
 
-<style scoped>
-/*header {*/
-/*  line-height: 1.5;*/
-/*  max-height: 100vh;*/
-/*}*/
-
-/*.logo {*/
-/*  display: block;*/
-/*  margin: 0 auto 2rem;*/
-/*}*/
-
-/*nav {*/
-/*  width: 100%;*/
-/*  font-size: 12px;*/
-/*  text-align: center;*/
-/*  margin-top: 2rem;*/
-/*}*/
-
-/*nav a.router-link-exact-active {*/
-/*  color: var(--color-text);*/
-/*}*/
-
-/*nav a.router-link-exact-active:hover {*/
-/*  background-color: transparent;*/
-/*}*/
-
-/*nav a {*/
-/*  display: inline-block;*/
-/*  padding: 0 1rem;*/
-/*  border-left: 1px solid var(--color-border);*/
-/*}*/
-
-/*nav a:first-of-type {*/
-/*  border: 0;*/
-/*}*/
-
-/*@media (min-width: 1024px) {*/
-/*  header {*/
-/*    display: flex;*/
-/*    place-items: center;*/
-/*    padding-right: calc(var(--section-gap) / 2);*/
-/*  }*/
-
-/*  .logo {*/
-/*    margin: 0 2rem 0 0;*/
-/*  }*/
-
-/*  header .wrapper {*/
-/*    display: flex;*/
-/*    place-items: flex-start;*/
-/*    flex-wrap: wrap;*/
-/*  }*/
-
-/*  nav {*/
-/*    text-align: left;*/
-/*    margin-left: -1rem;*/
-/*    font-size: 1rem;*/
-
-/*    padding: 1rem 0;*/
-/*    margin-top: 1rem;*/
-/*  }*/
-/*}*/
-</style>

@@ -101,7 +101,7 @@
 </template>
 
 <script setup>
-import { reactive, computed, ref } from "vue";
+import { ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
 
@@ -114,11 +114,7 @@ const {
 } = useQuery(["recipes"], async () => {
   const req = selectedCategory.value === "All" ? "" : selectedCategory.value;
   const response = await axios.get("/recipes/?category=" + req);
-
-  const recipesWithFirstImageUrl = response.data.map((recipe) => {
-    return { ...recipe };
-  });
-  return recipesWithFirstImageUrl;
+  return response.data;
 });
 const clickCategory = (category) => {
   selectedCategory.value = category;

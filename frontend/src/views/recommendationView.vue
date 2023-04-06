@@ -35,6 +35,7 @@
           <v-container>
             <v-row>
               <v-col v-for="(item, index) in recipes" :key="index" cols="12" sm="6" md="4">
+
                 <v-card
                     :loading="false"
                     class="mx-auto "
@@ -96,9 +97,9 @@
                       {{ item.RecipeCategory }}
                     </div>
 
-<!--                    <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio-->
-<!--                      seating.-->
-<!--                    </div>-->
+                    <!--                    <div>Small plates, salads & sandwiches - an intimate setting with 12 indoor seats plus patio-->
+                    <!--                      seating.-->
+                    <!--                    </div>-->
                   </v-card-text>
                 </v-card>
 

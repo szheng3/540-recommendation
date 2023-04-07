@@ -8,6 +8,9 @@ The goal of this project is to recommend top recipes according to ingredients pr
 
 This code implements a recipe recommender system using a neural network. The system is designed to recommend recipes to users based on their past ratings and other users' ratings. The code is based on PyTorch.
 
+![image](https://user-images.githubusercontent.com/44442059/230596869-fdf451c8-6d9d-4ad3-aa82-b55a42e9a6f1.png)
+
+
 ## Data Source
 For this project, we are using recipes and reviews data from popular cooking website food network.
 

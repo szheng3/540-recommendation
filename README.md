@@ -17,9 +17,11 @@ The reviews dataset contains 1,401,982 reviews from 271,907 different users. Thi
 https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 
 ## Requirements
-PyTorch
-pandas
-scikit-learn
+`PyTorch`
+
+`pandas`
+
+`scikit-learn`
 
 ## Model Training and Evaluation
 
@@ -39,5 +41,7 @@ This code defines a neural network model for a recipe recommender system. The mo
 ## Results
 
 ## Application
+
+This is a Vue.js application that displays recipe recommendations based on user selections. The application uses the vue-router library to manage navigation and has a main app bar at the top of the page. The app bar contains a Log In button that opens a modal where the user can select their username from a dropdown menu. The app retrieves recipe data from an API using the @tanstack/vue-query library and displays it in a grid of recipe cards. The user can filter the recipe results by category by clicking on a category in the left-hand sidebar. The footer of the page provides information about the project and its developers.
 
 ## References

@@ -29,3 +29,5 @@ Temporary Items
 .idea
 .data
 */node_modules
+notebooks/data/recipes.parquet
+notebooks/data/reviews.parquet

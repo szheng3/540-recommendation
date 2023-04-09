@@ -4,6 +4,8 @@ from fastapi import FastAPI
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 import re
+import torch
+
 
 app = FastAPI()
 
@@ -70,6 +72,17 @@ async def get_top_10_popular(category: Optional[str] = None, id: Optional[int] =
     # Sort the dataframe by the "ReviewCount" column in descending order
 
     sorted_data = filtered_data.sort_values('ReviewCount', ascending=False)
+
+    if id:
+        # specify the path to the saved model file
+        model_path = 'saved_models/best_model.pt'
+
+        # load the saved model
+        model = torch.load(model_path)
+
+        # move the model to the appropriate device, e.g. GPU or CPU
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model = model.to(device)
 
     # Select the top 10 rows
     top_10 = sorted_data.head(6)

@@ -21,8 +21,7 @@ class RecipeRecommendor:
                                  max_review_counts=max_review_count + 1)
 
         self.train_loader, self.valid_loader, self.train_dataset, self.val_dataset, self.saved_models_dir, self.device, self.batch_size = self.data.split()
-        self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
-
+        self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
 
     def __train__(self):
         # Initialize the best validation loss to a large value
@@ -71,12 +70,16 @@ class RecipeRecommendor:
                 print(f"Validation loss improved. Saving the model to {self.saved_models_dir}/best_model.pt")
                 torch.save(model.state_dict(), f"{self.saved_models_dir}/best_model.pt")
 
-    def __createrecommendations__(self, author_id):
+    def __createrecommendations__(self, author_id, recipe_ids=None):
         # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
         model = self.model.to(self.device)  # Send model to GPU if available
 
         df = self.df
-        recipe_ids = df["RecipeId"].unique()[:1000]
+        if recipe_ids is None:
+            recipe_ids = df["RecipeId"].unique()[:1000]
+        else:
+            # todo k-mean cluster
+            recipe_ids = recipe_ids
         # recipe_ids = df["RecipeId"].unique()
 
         user_has_ratings = author_id in df["AuthorId_y"].values

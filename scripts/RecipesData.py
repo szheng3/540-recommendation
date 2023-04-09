@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 
 class RecipeDataset(Dataset):
     def __init__(self):
-        self.__loaddata__
+        self.__loaddata__()
         self.user_encoder = LabelEncoder()
         self.item_encoder = LabelEncoder()
         self.recipe_ids = self.item_encoder.fit_transform(self.data["RecipeId"].values)
@@ -19,9 +19,9 @@ class RecipeDataset(Dataset):
         self.review_counts = self.data["ReviewCount"].astype(float).values
         
     def __loaddata__(self):
-        reviews_df = pd.read_parquet('data/reviews.parquet')
-        recipes_df = pd.read_parquet('data/recipes.parquet')
-        self.data = pd.merge(reviews_df, recipes_df, on='RecipeId')
+        self.reviews_df = pd.read_csv('./data/reviews.csv')
+        self.recipes_df = pd.read_csv('./data/recipes.csv')
+        self.data = pd.merge(self.reviews_df, self.recipes_df, on='RecipeId')
 
     def __len__(self):
         return len(self.recipe_ids)
@@ -58,6 +58,6 @@ class RecipeDataset(Dataset):
         batch_size = 32
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         valid_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-        saved_models_dir = 'saved_models'
+        saved_models_dir = './saved_models'
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         return train_loader, valid_loader, train_dataset, val_dataset, saved_models_dir, device, batch_size

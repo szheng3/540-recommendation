@@ -4,6 +4,10 @@ from fastapi import FastAPI
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 import re
+import torch
+
+from scripts.RecipesData import RecipeDataset
+from scripts.RecipesRecommendor import RecipeRecommendor
 
 app = FastAPI()
 
@@ -11,9 +15,12 @@ data = []
 
 
 def read_data():
-    global recipes_df, reviews_df
-    recipes_df = pd.read_csv('./data/recipes.csv')
-    reviews_df = pd.read_csv('./data/reviews.csv')
+    global recipes_df, reviews_df, recipe_data, recipe_recommendor
+    recipe_data = RecipeDataset()
+    recipes_df = recipe_data.recipes_df
+    reviews_df = recipe_data.reviews_df
+    recipe_recommendor = RecipeRecommendor(recipe_data)
+
     # read recipes.parquet file
     # recipes_df = pd.read_parquet('data/recipes.parquet')
     # data = pd.merge(reviews_df, recipes_df, on='RecipeId')
@@ -48,7 +55,7 @@ async def get_author():
 
 
 @app.get("/recipes")
-async def get_top_10_popular(category: Optional[str] = None, id: Optional[int] = None):
+async def get_top_10_popular(category: Optional[str] = None, userId: Optional[int] = None):
     # Filter by category if provided
     if category:
         filtered_data = recipes_df[recipes_df['RecipeCategory'] == category]
@@ -70,9 +77,28 @@ async def get_top_10_popular(category: Optional[str] = None, id: Optional[int] =
     # Sort the dataframe by the "ReviewCount" column in descending order
 
     sorted_data = filtered_data.sort_values('ReviewCount', ascending=False)
+    if userId:
+        # get the recommended recipe IDs and their corresponding ratings
+        ratings, recipe_ids = recipe_recommendor.__createrecommendations__(userId)
 
-    # Select the top 10 rows
-    top_10 = sorted_data.head(6)
+        # sort the recipe IDs in descending order of their ratings
+        top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)]
 
-    # Return the top 10 rows as a list of dictionaries
-    return top_10.to_dict(orient='records')
+        # filter the top 10 recipe IDs and keep their original order
+        top_10 = []
+        for recipe_id in top_recipe_ids:
+            if recipe_id in sorted_data['RecipeId'].tolist():
+                top_10.append(sorted_data.loc[sorted_data['RecipeId'] == recipe_id])
+                if len(top_10) == 6:
+                    break
+
+        # concatenate the dataframes and return the result as a list of dictionaries
+        result = pd.concat(top_10).to_dict(orient='records')
+        return result
+
+    else:
+        # Select the top 10 rows
+        top_10 = sorted_data.head(6)
+
+        # Return the top 10 rows as a list of dictionaries
+        return top_10.to_dict(orient='records')

@@ -1,5 +1,6 @@
-from RecipesData import RecipeDataset 
-from RecipesModel import RecipeModel
+from scripts.RecipesData import RecipeDataset
+
+from scripts.RecipesModel import RecipeModel
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import LabelEncoder
@@ -10,16 +11,19 @@ from torch.nn import MultiheadAttention
 
 
 class RecipeRecommendor:
-    
-    def __init__(self):
-        self.data = RecipeDataset()
+
+    def __init__(self, data):
+        self.data = data
         max_calories, max_review_count, self.df = self.data.__getmaxcaloriesandreviewcount__()
-        self.model = RecipeModel(num_recipes=len(self.data.item_encoder.classes_) + 1, 
-                    num_authors=len(self.data.user_encoder.classes_) + 1,
-                    max_calories=max_calories+1,
-                    max_review_counts=max_review_count+1)
+        self.model = RecipeModel(num_recipes=len(self.data.item_encoder.classes_) + 1,
+                                 num_authors=len(self.data.user_encoder.classes_) + 1,
+                                 max_calories=max_calories + 1,
+                                 max_review_counts=max_review_count + 1)
+
         self.train_loader, self.valid_loader, self.train_dataset, self.val_dataset, self.saved_models_dir, self.device, self.batch_size = self.data.split()
-        
+        self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
+
+
     def __train__(self):
         # Initialize the best validation loss to a large value
         best_valid_loss = float('inf')
@@ -27,7 +31,7 @@ class RecipeRecommendor:
         # Create a directory for the saved models if it doesn't exist
         os.makedirs(self.saved_models_dir, exist_ok=True)
         # RecipeModel(num_recipes=data.loc[:,'RecipeId'].max()+1, num_authors=data.loc[:,"AuthorId_y"].max()+1)
-        model = model.to(self.device) # Send model to GPU if available
+        model = self.model.to(self.device)  # Send model to GPU if available
 
         criterion = torch.nn.MSELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -66,16 +70,14 @@ class RecipeRecommendor:
                 best_valid_loss = valid_loss
                 print(f"Validation loss improved. Saving the model to {self.saved_models_dir}/best_model.pt")
                 torch.save(model.state_dict(), f"{self.saved_models_dir}/best_model.pt")
-                
-    def __createrecommendations__(self):
-        model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt"))
-        model = model.to(self.device) # Send model to GPU if available
+
+    def __createrecommendations__(self, author_id):
+        # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
+        model = self.model.to(self.device)  # Send model to GPU if available
 
         df = self.df
-        author_id = 1545
-        recipe_ids = df["RecipeId"].unique()[:10000]
+        recipe_ids = df["RecipeId"].unique()[:1000]
         # recipe_ids = df["RecipeId"].unique()
-
 
         user_has_ratings = author_id in df["AuthorId_y"].values
 
@@ -90,9 +92,12 @@ class RecipeRecommendor:
             if not user_has_ratings or (user_has_ratings and recipe_id not in user_rated_recipe_ids):
                 recipe_id_transformed = self.data.item_encoder.transform([recipe_id])[0]
                 recipe_data = df[df["RecipeId"] == recipe_id].iloc[0]
-                recommendation_data.append((recipe_id_transformed, author_id, recipe_data["Calories"], recipe_data["ReviewCount"]))
+                recommendation_data.append(
+                    (recipe_id_transformed, author_id, recipe_data["Calories"], recipe_data["ReviewCount"]))
 
-        recommendation_dataset = [(torch.tensor(a).to(self.device), torch.tensor(b).to(self.device), torch.tensor(c).to(self.device), torch.tensor(d).to(self.device)) for a, b, c, d in recommendation_data]
+        recommendation_dataset = [(torch.tensor(a).to(self.device), torch.tensor(b).to(self.device),
+                                   torch.tensor(c).to(self.device), torch.tensor(d).to(self.device)) for a, b, c, d in
+                                  recommendation_data]
         recommendation_loader = DataLoader(recommendation_dataset, batch_size=self.batch_size, shuffle=False)
         # Model evaluation
         model.eval()
@@ -101,12 +106,12 @@ class RecipeRecommendor:
             for inputs in recommendation_loader:
                 rating = model(*inputs)
                 ratings.extend(rating.detach().cpu().numpy())
-                
+
         return ratings, recipe_ids
-                
+
+
 if __name__ == "__main__":
-    recipe_recommendor = RecipeRecommendor()
-    ratings, recipe_ids = recipe_recommendor.__createrecommendations__()
+    recipe_recommendor = RecipeRecommendor(RecipeDataset())
+    ratings, recipe_ids = recipe_recommendor.__createrecommendations__(1545)
     top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)[:10]]
     print(top_recipe_ids)
-

@@ -11,8 +11,8 @@ from torch.nn import MultiheadAttention
 
 class RecipeRecommendor:
 
-    def __init__(self):
-        self.data = RecipeDataset()
+    def __init__(self, data):
+        self.data = data
         max_calories, max_review_count, self.df = self.data.__getmaxcaloriesandreviewcount__()
         self.model = RecipeModel(num_recipes=len(self.data.item_encoder.classes_) + 1,
                                  num_authors=len(self.data.user_encoder.classes_) + 1,
@@ -107,7 +107,7 @@ class RecipeRecommendor:
 
 
 if __name__ == "__main__":
-    recipe_recommendor = RecipeRecommendor()
+    recipe_recommendor = RecipeRecommendor(RecipeDataset())
     ratings, recipe_ids = recipe_recommendor.__createrecommendations__(1545)
     top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)[:10]]
     print(top_recipe_ids)

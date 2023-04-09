@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import re
 import torch
 
+from scripts.RecipesData import RecipeDataset
 
 app = FastAPI()
 
@@ -13,9 +14,10 @@ data = []
 
 
 def read_data():
-    global recipes_df, reviews_df
-    recipes_df = pd.read_csv('./data/recipes.csv')
-    reviews_df = pd.read_csv('./data/reviews.csv')
+    global recipes_df, reviews_df, recipe_data
+    recipe_data = RecipeDataset()
+    recipes_df = recipe_data.recipes_df
+    reviews_df = recipe_data.reviews_df
     # read recipes.parquet file
     # recipes_df = pd.read_parquet('data/recipes.parquet')
     # data = pd.merge(reviews_df, recipes_df, on='RecipeId')

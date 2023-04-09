@@ -1,9 +1,9 @@
 <script setup>
-import {computed, reactive, ref, watch} from "vue";
-import {useRouter} from "vue-router";
-import {useQuery} from "@tanstack/vue-query";
+import { computed, reactive, ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
-import {ContentLoader} from "vue-content-loader";
+import { ContentLoader } from "vue-content-loader";
 
 const state = reactive({
   showModal: false,
@@ -25,7 +25,7 @@ const {
     category: state.selectedCategory === "All" ? "" : state.selectedCategory,
     userId: state.selectedUser,
   };
-  const response = await axios.get("/recipes", {params});
+  const response = await axios.get("/recipes", { params });
   return response.data;
 });
 const clickCategory = (category) => {
@@ -33,7 +33,7 @@ const clickCategory = (category) => {
   refetch();
 };
 
-const {data: categories} = useQuery(["top-categories"], async () => {
+const { data: categories } = useQuery(["top-categories"], async () => {
   const response = await axios.get("/top_categories");
   response.data.top_categories.unshift("All");
 
@@ -48,7 +48,7 @@ const getUserInitials = computed(() => {
   return nameParts.map((part) => part.charAt(0).toUpperCase()).join("");
 });
 
-const {data: users} = useQuery(["author"], async () => {
+const { data: users } = useQuery(["author"], async () => {
   const response = await axios.get("/author");
 
   return response.data.top_authors;
@@ -73,7 +73,7 @@ const goToDashboard = (link) => {
 
 const login = () => {
   state.selectedName = users.value.find(
-      (user) => user.AuthorId === state.userId
+    (user) => user.AuthorId === state.userId
   ).AuthorName;
   state.selectedUser = state.userId;
   refetch();
@@ -91,28 +91,28 @@ const login = () => {
         </v-avatar>
 
         <v-btn
-            v-if="!state.selectedUser"
-            @click="goToDashboard('Login')"
-            variant="text"
+          v-if="!state.selectedUser"
+          @click="goToDashboard('Login')"
+          variant="text"
         >
           LogIn
         </v-btn>
         <v-btn
-            v-if="state.selectedUser"
-            @click="goToDashboard('Logout')"
-            variant="text"
+          v-if="state.selectedUser"
+          @click="goToDashboard('Logout')"
+          variant="text"
         >
           LogOut
         </v-btn>
 
         <v-spacer></v-spacer>
 
-        <v-responsive max-width="80">
-          <v-btn> Likes</v-btn>
-        </v-responsive>
+        <!--        <v-responsive max-width="80">-->
+        <!--          <v-btn> Likes</v-btn>-->
+        <!--        </v-responsive>-->
       </v-container>
     </v-app-bar>
-    <notifications class="mt-10 mr-16"/>
+    <notifications class="mt-10 mr-16" />
 
     <v-main class="bg-grey-lighten-4">
       <v-dialog v-model="state.showModal" max-width="400px">
@@ -120,11 +120,11 @@ const login = () => {
           <v-card-title>Log In</v-card-title>
           <v-card-text>
             <v-select
-                v-model="state.userId"
-                :items="users"
-                label="Select user"
-                item-title="AuthorName"
-                item-value="AuthorId"
+              v-model="state.userId"
+              :items="users"
+              label="Select user"
+              item-title="AuthorName"
+              item-value="AuthorId"
             ></v-select>
           </v-card-text>
           <v-card-actions>
@@ -138,54 +138,12 @@ const login = () => {
           <v-card variant="flat">
             <v-card-text class="d-flex align-content-center justify-center">
               <ContentLoader viewBox="0 0 820 450">
-                <rect
-                    x="10"
-                    y="10"
-                    rx="5"
-                    ry="5"
-                    width="260"
-                    height="140"
-                />
-                <rect
-                    x="280"
-                    y="10"
-                    rx="5"
-                    ry="5"
-                    width="260"
-                    height="280"
-                />
-                <rect
-                    x="550"
-                    y="10"
-                    rx="5"
-                    ry="5"
-                    width="260"
-                    height="140"
-                />
-                <rect
-                    x="10"
-                    y="160"
-                    rx="5"
-                    ry="5"
-                    width="260"
-                    height="280"
-                />
-                <rect
-                    x="280"
-                    y="300"
-                    rx="5"
-                    ry="5"
-                    width="260"
-                    height="140"
-                />
-                <rect
-                    x="550"
-                    y="160"
-                    rx="5"
-                    ry="5"
-                    width="260"
-                    height="280"
-                />
+                <rect x="10" y="10" rx="5" ry="5" width="260" height="140" />
+                <rect x="280" y="10" rx="5" ry="5" width="260" height="280" />
+                <rect x="550" y="10" rx="5" ry="5" width="260" height="140" />
+                <rect x="10" y="160" rx="5" ry="5" width="260" height="280" />
+                <rect x="280" y="300" rx="5" ry="5" width="260" height="140" />
+                <rect x="550" y="160" rx="5" ry="5" width="260" height="280" />
               </ContentLoader>
             </v-card-text>
           </v-card>
@@ -197,13 +155,13 @@ const login = () => {
                 <v-list-subheader>Category</v-list-subheader>
 
                 <v-list-item
-                    v-for="(category, i) in categories"
-                    :key="i"
-                    :value="category"
-                    active-color="primary"
-                    rounded="shaped"
-                    @click="clickCategory(category)"
-                    link
+                  v-for="(category, i) in categories"
+                  :key="i"
+                  :value="category"
+                  active-color="primary"
+                  rounded="shaped"
+                  @click="clickCategory(category)"
+                  link
                 >
                   <v-list-item-title>
                     {{ category }}
@@ -219,52 +177,52 @@ const login = () => {
                 <v-card-text class="d-flex align-content-center justify-center">
                   <ContentLoader viewBox="0 0 820 450">
                     <rect
-                        x="10"
-                        y="10"
-                        rx="5"
-                        ry="5"
-                        width="260"
-                        height="140"
+                      x="10"
+                      y="10"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="140"
                     />
                     <rect
-                        x="280"
-                        y="10"
-                        rx="5"
-                        ry="5"
-                        width="260"
-                        height="280"
+                      x="280"
+                      y="10"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="280"
                     />
                     <rect
-                        x="550"
-                        y="10"
-                        rx="5"
-                        ry="5"
-                        width="260"
-                        height="140"
+                      x="550"
+                      y="10"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="140"
                     />
                     <rect
-                        x="10"
-                        y="160"
-                        rx="5"
-                        ry="5"
-                        width="260"
-                        height="280"
+                      x="10"
+                      y="160"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="280"
                     />
                     <rect
-                        x="280"
-                        y="300"
-                        rx="5"
-                        ry="5"
-                        width="260"
-                        height="140"
+                      x="280"
+                      y="300"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="140"
                     />
                     <rect
-                        x="550"
-                        y="160"
-                        rx="5"
-                        ry="5"
-                        width="260"
-                        height="280"
+                      x="550"
+                      y="160"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="280"
                     />
                   </ContentLoader>
                 </v-card-text>
@@ -274,26 +232,26 @@ const login = () => {
               <v-container>
                 <v-row>
                   <v-col
-                      v-for="(item, index) in recipes"
-                      :key="index"
-                      cols="12"
-                      sm="6"
-                      md="4"
+                    v-for="(item, index) in recipes"
+                    :key="index"
+                    cols="12"
+                    sm="6"
+                    md="4"
                   >
                     <v-card :loading="false" class="mx-auto" max-width="374">
                       <template v-slot:loader="{ isActive }">
                         <v-progress-linear
-                            :active="isActive"
-                            color="deep-purple"
-                            height="4"
-                            indeterminate
+                          :active="isActive"
+                          color="deep-purple"
+                          height="4"
+                          indeterminate
                         ></v-progress-linear>
                       </template>
 
                       <v-img
-                          cover
-                          height="250"
-                          :src="item.first_image_url"
+                        cover
+                        height="250"
+                        :src="item.first_image_url"
                       ></v-img>
 
                       <v-card-item>
@@ -306,9 +264,9 @@ const login = () => {
                           <!--                      <span class="me-1"> {{item.RecipeCategory}} </span>-->
 
                           <v-icon
-                              color="error"
-                              icon="mdi-fire-circle"
-                              size="small"
+                            color="error"
+                            icon="mdi-fire-circle"
+                            size="small"
                           ></v-icon>
                         </v-card-subtitle>
                       </v-card-item>
@@ -316,12 +274,12 @@ const login = () => {
                       <v-card-text>
                         <v-row align="center" class="mx-0">
                           <v-rating
-                              v-model="item.AggregatedRating"
-                              color="amber"
-                              density="compact"
-                              half-increments
-                              readonly
-                              size="small"
+                            v-model="item.AggregatedRating"
+                            color="amber"
+                            density="compact"
+                            half-increments
+                            readonly
+                            size="small"
                           ></v-rating>
 
                           <div class="text-grey ms-4">

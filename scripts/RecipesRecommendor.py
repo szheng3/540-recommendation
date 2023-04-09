@@ -77,6 +77,9 @@ class RecipeRecommendor:
         df = self.df
         if recipe_ids is None:
             recipe_ids = df["RecipeId"].unique()[:1000]
+        else:
+            # todo k-mean cluster
+            recipe_ids = recipe_ids
         # recipe_ids = df["RecipeId"].unique()
 
         user_has_ratings = author_id in df["AuthorId_y"].values

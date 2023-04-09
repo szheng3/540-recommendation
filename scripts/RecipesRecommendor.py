@@ -1,5 +1,6 @@
-from RecipesData import RecipeDataset
-from RecipesModel import RecipeModel
+from scripts.RecipesData import RecipeDataset
+
+from scripts.RecipesModel import RecipeModel
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import LabelEncoder
@@ -18,7 +19,10 @@ class RecipeRecommendor:
                                  num_authors=len(self.data.user_encoder.classes_) + 1,
                                  max_calories=max_calories + 1,
                                  max_review_counts=max_review_count + 1)
+
         self.train_loader, self.valid_loader, self.train_dataset, self.val_dataset, self.saved_models_dir, self.device, self.batch_size = self.data.split()
+        self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
+
 
     def __train__(self):
         # Initialize the best validation loss to a large value
@@ -68,7 +72,7 @@ class RecipeRecommendor:
                 torch.save(model.state_dict(), f"{self.saved_models_dir}/best_model.pt")
 
     def __createrecommendations__(self, author_id):
-        self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
+        # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
         model = self.model.to(self.device)  # Send model to GPU if available
 
         df = self.df

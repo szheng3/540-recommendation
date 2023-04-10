@@ -88,7 +88,6 @@ async def get_top_10_popular(category: Optional[str] = None, userId: Optional[in
 
         # sort the recipe IDs in descending order of their ratings
         top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)]
-        print(top_recipe_ids)
 
         # filter the top 10 recipe IDs and keep their original order
         top_10 = []

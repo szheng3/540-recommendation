@@ -1,11 +1,11 @@
 from scripts.RecipesData import RecipeDataset
-
 from scripts.RecipesModel import RecipeModel
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import LabelEncoder
 import os
 import torch
+import numpy as np
 from torch.utils.data import random_split
 from torch.nn import MultiheadAttention
 
@@ -78,10 +78,7 @@ class RecipeRecommendor:
         if recipe_ids is None:
             recipe_ids = df["RecipeId"].unique()[:1000]
         else:
-            # todo k-mean cluster
             recipe_ids = recipe_ids
-        # recipe_ids = df["RecipeId"].unique()
-
         user_has_ratings = author_id in df["AuthorId_y"].values
 
         if user_has_ratings:
@@ -94,6 +91,7 @@ class RecipeRecommendor:
         for recipe_id in recipe_ids:
             if not user_has_ratings or (user_has_ratings and recipe_id not in user_rated_recipe_ids):
                 recipe_id_transformed = self.data.item_encoder.transform([recipe_id])[0]
+                if not len(df[df["RecipeId"] == recipe_id]): continue
                 recipe_data = df[df["RecipeId"] == recipe_id].iloc[0]
                 recommendation_data.append(
                     (recipe_id_transformed, author_id, recipe_data["Calories"], recipe_data["ReviewCount"]))
@@ -115,6 +113,17 @@ class RecipeRecommendor:
 
 if __name__ == "__main__":
     recipe_recommendor = RecipeRecommendor(RecipeDataset())
-    ratings, recipe_ids = recipe_recommendor.__createrecommendations__(1545)
+    test_userId = 1545
+    df = pd.read_csv('./data/recipes_w_labels.csv')
+    row = df[df['AuthorId_y'] == test_userId]
+    label_cooktime = row['label_cooktime'].values[0]
+    label_ingredients = row['label_ingredients'].values[0]
+    print(f'label_cooktime: {label_cooktime}, label_ingredients: {label_ingredients}')
+    alikeRecipes = df[df['label_cooktime'] == label_cooktime]
+    alikeRecipes = df[df['label_ingredients'] == label_ingredients]
+    print(f'number of alike recipes: {len(alikeRecipes)}')
+    test_recipeIds = np.array(alikeRecipes['RecipeId'])
+    ratings, recipe_ids = recipe_recommendor.__createrecommendations__(test_userId, test_recipeIds)
+    # ratings, recipe_ids = recipe_recommendor.__createrecommendations__(test_userId)
     top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)[:10]]
     print(top_recipe_ids)

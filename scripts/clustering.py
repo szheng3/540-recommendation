@@ -12,9 +12,9 @@ print("finished.")
 df = pd.merge(reviews_df, recipes_df, on='RecipeId')
 
 # select all relevant columns of the merged dataframe
-features = ['CookTime', 'PrepTime', 'TotalTime',
-            'Calories', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent',
-            'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent',
+features = ['RecipeId', 'AuthorId_y',
+            'CookTime', 'PrepTime', 'TotalTime',
+            'Calories', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent', 'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent',
            ]
 df = df[features]
 
@@ -48,7 +48,7 @@ print("finished.")
 
 print("Start k-means clustering on cooking time...", end='')
 # select the cooking time features and convert it to numpy
-df_cookingtime = df[df.columns[1:4]]
+df_cookingtime = df[df.columns[2:5]]
 df_cookingtime = df_cookingtime.to_numpy()
 
 # fit the model
@@ -61,7 +61,7 @@ print("finished.")
 
 print("Start k-means clustering on ingredients...", end='')
 # select the ingredient features and convert it to numpy
-df_ingredient = df[df.columns[4:]]
+df_ingredient = df[df.columns[5:]]
 df_ingredient = df_ingredient.to_numpy()
 
 # fit the model

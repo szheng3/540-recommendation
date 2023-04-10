@@ -78,7 +78,6 @@ class RecipeCluster:
 def get_similar_recipes(user_id, df):
     # Select the row with the specified user ID
     row = df[df['AuthorId_x'] == user_id]
-    # if len(row) == 0: raise Exception(f"User {user_id} not found. Please try another one.")
     # Extract cooktime and ingredients labels
     cooktime_label = row['label_cooktime'].values[0]
     ingredients_label = row['label_ingredients'].values[0]

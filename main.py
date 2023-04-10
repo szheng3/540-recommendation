@@ -9,7 +9,7 @@ if __name__ == "__main__":
     recipe_recommendor = RecipeRecommendor(data)
     # test_userId = 1545
     test_userId = 2008
-    output=get_similar_recipes(test_userId, data.clustering_df)
+    output=get_similar_recipes(test_userId, data.clustering_df,category="Dessert")
     print(output)
     ratings, recipe_ids = recipe_recommendor.__createrecommendations__(author_id=test_userId,
                                                                        recipe_ids=get_similar_recipes(test_userId, data.clustering_df, category="Dessert"),

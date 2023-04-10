@@ -8,6 +8,7 @@ import torch
 
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
+from scripts.clustering import get_similar_recipes
 
 app = FastAPI()
 
@@ -79,7 +80,8 @@ async def get_top_10_popular(category: Optional[str] = None, userId: Optional[in
     sorted_data = filtered_data.sort_values('ReviewCount', ascending=False)
     if userId:
         # get the recommended recipe IDs and their corresponding ratings
-        ratings, recipe_ids = recipe_recommendor.__createrecommendations__(userId)
+
+        ratings, recipe_ids = recipe_recommendor.__createrecommendations__(userId,get_similar_recipes(userId))
 
         # sort the recipe IDs in descending order of their ratings
         top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)]

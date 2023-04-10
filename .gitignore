@@ -30,3 +30,4 @@ Temporary Items
 data
 */node_modules
 notebooks/data
+*.amlignore*

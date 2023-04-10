@@ -4,6 +4,8 @@ from sklearn.preprocessing import LabelEncoder
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import random_split
 
+from scripts.clustering import generate_data
+
 
 class RecipeDataset(Dataset):
     def __init__(self):
@@ -16,11 +18,12 @@ class RecipeDataset(Dataset):
         self.ratings = self.data["Rating"].astype(float).values
         self.calories = self.data["Calories"].astype(float).values
         self.review_counts = self.data["ReviewCount"].astype(float).values
-        
+
     def __loaddata__(self):
         self.reviews_df = pd.read_csv('./data/reviews.csv')
         self.recipes_df = pd.read_csv('./data/recipes.csv')
         self.data = pd.merge(self.reviews_df, self.recipes_df, on='RecipeId')
+        self.clustering_df = generate_data('./data')
 
     def __len__(self):
         return len(self.recipe_ids)
@@ -32,7 +35,7 @@ class RecipeDataset(Dataset):
         calories = self.calories[idx]
         review_count = self.review_counts[idx]
         return (recipe_id, author_id, calories, review_count), rating
-    
+
     def __getmaxcaloriesandreviewcount__(self):
         df = self.data[["RecipeId", "AuthorId_y", "Rating", "Calories", "ReviewCount"]]
 
@@ -45,7 +48,7 @@ class RecipeDataset(Dataset):
         max_calories = int(df["Calories"].max())
         max_review_count = int(df["ReviewCount"].max())
         return max_calories, max_review_count, df
-    
+
     def split(self):
         # Split the dataset into training and validation sets
         train_size = int(0.8 * len(self.data))

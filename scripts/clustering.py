@@ -76,9 +76,7 @@ class RecipeCluster:
         self.df.to_csv(output_file, index=False)
 
 
-def get_similar_recipes(user_id):
-    df = pd.read_csv('./data/recipes_w_labels.csv')
-
+def get_similar_recipes(user_id, df):
     # Select the row with the specified user ID
     row = df[df['AuthorId_y'] == user_id]
 
@@ -94,10 +92,10 @@ def get_similar_recipes(user_id):
     return recipe_ids
 
 
-def generate_data():
-    recipes_file = '../data/recipes.csv'
-    reviews_file = '../data/reviews.csv'
-    output_file = '../data/recipes_w_labels.csv'
+def generate_data(path='../data'):
+    recipes_file = path + '/recipes.csv'
+    reviews_file = path + '/reviews.csv'
+    output_file = path + '/recipes_w_labels.csv'
     # Check if the output file already exists
     if not os.path.exists(output_file):
         recipe_cluster = RecipeCluster(recipes_file, reviews_file)
@@ -108,6 +106,7 @@ def generate_data():
         recipe_cluster.save_data(output_file)
     else:
         print(f'{output_file} already exists. Skipping generation.')
+    return pd.read_csv(output_file)
 
 
 if __name__ == "__main__":

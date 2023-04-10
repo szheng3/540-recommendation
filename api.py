@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
-from scripts.clustering import get_similar_recipes
+from scripts.clustering import get_similar_recipes, generate_data
 
 app = FastAPI()
 
@@ -15,10 +15,12 @@ data = []
 
 
 def read_data():
+    generate_data('./data')
     global recipes_df, reviews_df, recipe_data, recipe_recommendor
     recipe_data = RecipeDataset()
     recipes_df = recipe_data.recipes_df
     reviews_df = recipe_data.reviews_df
+
     recipe_recommendor = RecipeRecommendor(recipe_data)
 
     # read recipes.parquet file
@@ -80,10 +82,12 @@ async def get_top_10_popular(category: Optional[str] = None, userId: Optional[in
     if userId:
         # get the recommended recipe IDs and their corresponding ratings
 
-        ratings, recipe_ids = recipe_recommendor.__createrecommendations__(userId,get_similar_recipes(userId))
+        ratings, recipe_ids = recipe_recommendor.__createrecommendations__(userId, get_similar_recipes(userId,
+                                                                                                       recipe_data.clustering_df))
 
         # sort the recipe IDs in descending order of their ratings
         top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)]
+        print(top_recipe_ids)
 
         # filter the top 10 recipe IDs and keep their original order
         top_10 = []

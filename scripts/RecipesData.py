@@ -13,7 +13,7 @@ class RecipeDataset(Dataset):
         self.user_encoder = LabelEncoder()
         self.item_encoder = LabelEncoder()
         self.recipe_ids = self.item_encoder.fit_transform(self.data["RecipeId"].values)
-        self.author_ids = self.user_encoder.fit_transform(self.data["AuthorId_y"].values)
+        self.author_ids = self.user_encoder.fit_transform(self.data["AuthorId_x"].values)
 
         self.ratings = self.data["Rating"].astype(float).values
         self.calories = self.data["Calories"].astype(float).values
@@ -23,7 +23,10 @@ class RecipeDataset(Dataset):
         self.reviews_df = pd.read_csv('./data/reviews.csv')
         self.recipes_df = pd.read_csv('./data/recipes.csv')
         self.data = pd.merge(self.reviews_df, self.recipes_df, on='RecipeId')
-        self.clustering_df = generate_data('./data')
+        clustering_df = generate_data('./data')
+        clustering_df = clustering_df[['RecipeId', 'label_cooktime', 'label_ingredients']]
+        self.clustering_df = pd.merge(self.data, clustering_df, on='RecipeId')
+        print(self.clustering_df.head(10))
 
     def __len__(self):
         return len(self.recipe_ids)
@@ -37,7 +40,7 @@ class RecipeDataset(Dataset):
         return (recipe_id, author_id, calories, review_count), rating
 
     def __getmaxcaloriesandreviewcount__(self):
-        df = self.data[["RecipeId", "AuthorId_y", "Rating", "Calories", "ReviewCount", "RecipeCategory"]]
+        df = self.data[["RecipeId", "AuthorId_x", "Rating", "Calories", "ReviewCount", "RecipeCategory"]]
 
         # remove duplicates without considering the first column
         df = df[~df.iloc[:, 1:].duplicated(keep='first', subset=df.columns[1:])]
@@ -54,9 +57,6 @@ class RecipeDataset(Dataset):
         train_size = int(0.8 * len(self.data))
         val_size = len(self.data) - train_size
         train_dataset, val_dataset = random_split(self.data, [train_size, val_size])
-
-        # train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
-
         batch_size = 32
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         valid_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)

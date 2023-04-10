@@ -21,7 +21,7 @@ class RecipeCluster:
         self.df = pd.merge(self.reviews_df, self.recipes_df, on='RecipeId')
 
         # Select relevant columns from the merged dataframe
-        features = ['RecipeId', 'AuthorId_y',
+        features = ['RecipeId',
                     'CookTime', 'PrepTime', 'TotalTime',
                     'Calories', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent',
                     'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent',
@@ -51,14 +51,13 @@ class RecipeCluster:
         print("Start time conversion...", end='')
         self.df['CookTime'] = self.df['CookTime'].apply(lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
         self.df['PrepTime'] = self.df['PrepTime'].apply(lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
-        self.df['TotalTime'] = self.df['TotalTime'].apply(
-            lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
+        self.df['TotalTime'] = self.df['TotalTime'].apply(lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
         print("finished.")
 
     def kmeans_clustering(self, k=1300):
         # Perform k-means clustering on cooking time features
         print("Start k-means clustering on cooking time...", end='')
-        df_cookingtime = self.df[self.df.columns[2:5]].to_numpy()
+        df_cookingtime = self.df[self.df.columns[1:4]].to_numpy()
         kmeans_cookingtime = KMeans(n_clusters=k, init='k-means++', n_init='auto', tol=1e-4, random_state=540).fit(
             df_cookingtime)
         self.df['label_cooktime'] = kmeans_cookingtime.labels_
@@ -66,7 +65,7 @@ class RecipeCluster:
 
         # Perform k-means clustering on ingredient features
         print("Start k-means clustering on ingredients...", end='')
-        df_ingredient = self.df[self.df.columns[5:]].to_numpy()
+        df_ingredient = self.df[self.df.columns[4:]].to_numpy()
         kmeans_ingredient = KMeans(n_clusters=k, init='k-means++', n_init='auto', tol=1e-4, random_state=540).fit(
             df_ingredient)
         self.df['label_ingredients'] = kmeans_ingredient.labels_
@@ -78,8 +77,8 @@ class RecipeCluster:
 
 def get_similar_recipes(user_id, df):
     # Select the row with the specified user ID
-    row = df[df['AuthorId_y'] == user_id]
-
+    row = df[df['AuthorId_x'] == user_id]
+    # if len(row) == 0: raise Exception(f"User {user_id} not found. Please try another one.")
     # Extract cooktime and ingredients labels
     cooktime_label = row['label_cooktime'].values[0]
     ingredients_label = row['label_ingredients'].values[0]

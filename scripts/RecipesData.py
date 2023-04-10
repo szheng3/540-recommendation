@@ -37,7 +37,7 @@ class RecipeDataset(Dataset):
         return (recipe_id, author_id, calories, review_count), rating
 
     def __getmaxcaloriesandreviewcount__(self):
-        df = self.data[["RecipeId", "AuthorId_y", "Rating", "Calories", "ReviewCount"]]
+        df = self.data[["RecipeId", "AuthorId_y", "Rating", "Calories", "ReviewCount", "RecipeCategory"]]
 
         # remove duplicates without considering the first column
         df = df[~df.iloc[:, 1:].duplicated(keep='first', subset=df.columns[1:])]

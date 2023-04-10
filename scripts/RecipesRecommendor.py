@@ -68,11 +68,16 @@ class RecipeRecommendor:
                 print(f"Validation loss improved. Saving the model to {self.saved_models_dir}/best_model.pt")
                 torch.save(model.state_dict(), f"{self.saved_models_dir}/best_model.pt")
 
-    def __createrecommendations__(self, author_id, recipe_ids=None):
+    def __createrecommendations__(self, author_id, recipe_ids=None,category=None):
         # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
         # model = self.model.to(self.device)  # Send model to GPU if available
 
         df = self.df
+        if category:
+            df = df[df['RecipeCategory'] == category]
+        else:
+            df = df
+
         if recipe_ids is None:
             recipe_ids = df["RecipeId"].unique()[:1000]
         else:

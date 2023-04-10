@@ -24,7 +24,7 @@ class RecipeCluster:
         features = ['RecipeId',
                     'CookTime', 'PrepTime', 'TotalTime',
                     'Calories', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent',
-                    'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent',
+                    'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent'
                     ]
         self.df = self.df[features]
 
@@ -54,7 +54,7 @@ class RecipeCluster:
         self.df['TotalTime'] = self.df['TotalTime'].apply(lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
         print("finished.")
 
-    def kmeans_clustering(self, k=1300):
+    def kmeans_clustering(self, k=130):
         # Perform k-means clustering on cooking time features
         print("Start k-means clustering on cooking time...", end='')
         df_cookingtime = self.df[self.df.columns[1:4]].to_numpy()
@@ -75,7 +75,7 @@ class RecipeCluster:
         self.df.to_csv(output_file, index=False)
 
 
-def get_similar_recipes(user_id, df):
+def get_similar_recipes(user_id, df, category=None):
     # Select the row with the specified user ID
     row = df[df['AuthorId_x'] == user_id]
     # Extract cooktime and ingredients labels
@@ -85,9 +85,16 @@ def get_similar_recipes(user_id, df):
     # Find recipes with matching cooktime and ingredients labels
     similar_recipes = df[(df['label_cooktime'] == cooktime_label) & (df['label_ingredients'] == ingredients_label)]
 
-    # Return the recipe IDs of similar recipes
+    # Find recipes with matching category if applicable
+    similar_recipes = df[(df['RecipeCategory'] == category)]
+
+    # Get the recipe IDs of similar recipes
     recipe_ids = similar_recipes['RecipeId'].values
-    return recipe_ids
+    print(f'len before dedup: {len(recipe_ids)}')
+    # Dedup
+    recipe_ids_dedup = list(set(recipe_ids))
+    print(f'len after dedup: {len(recipe_ids_dedup)}')
+    return recipe_ids_dedup
 
 
 def generate_data(path='../data'):

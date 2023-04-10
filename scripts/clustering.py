@@ -1,78 +1,114 @@
-# scripts for performing k-means clustering on cooking time and ingredients for each recipe
 import pandas as pd
 from sklearn.cluster import KMeans
-
-# read files
-print("Start reading files...", end='')
-recipes_df = pd.read_csv('../data/recipes.csv')
-reviews_df = pd.read_csv('../data/reviews.csv')
-print("finished.")
-
-# merge files based on recipe id (we only want recipes that has reviews)
-df = pd.merge(reviews_df, recipes_df, on='RecipeId')
-
-# select all relevant columns of the merged dataframe
-features = ['RecipeId', 'AuthorId_y',
-            'CookTime', 'PrepTime', 'TotalTime',
-            'Calories', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent', 'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent',
-           ]
-df = df[features]
-
-# remove duplicates
-df = df[~df.duplicated()]
-
-# reset the index and drop the original index column
-df = df.reset_index(drop=True)
-print(f'# of rows: {len(df)}')
-
-# fill the NA CookTime value with time 0 ('PT0S')
-df['CookTime'].fillna('PT0S', inplace=True)
-
-# function for converting time due to iso 8601 format error
-def convert(s):
-    time = s[2:s.find('H')]
-    if len(time) > 2: 
-        days = int(time)//24
-        hours = int(time)-days*24
-        s = s.replace(time, str(days)+'D'+str(hours))
-    return s
-
-# convert CookTime, PrepTime and TotalTime from iso format to timedelta format
-print("Start time convertion...", end='')
-df['CookTime'] = df['CookTime'].apply(lambda x: pd.to_timedelta(convert(x)).total_seconds())
-df['PrepTime'] = df['PrepTime'].apply(lambda x: pd.to_timedelta(convert(x)).total_seconds())
-df['TotalTime'] = df['TotalTime'].apply(lambda x: pd.to_timedelta(convert(x)).total_seconds())
-print("finished.")
-
-# Use k-means clustering to select ~1,000 possible alike recipes for each selected recipe for training/validation
-
-print("Start k-means clustering on cooking time...", end='')
-# select the cooking time features and convert it to numpy
-df_cookingtime = df[df.columns[2:5]]
-df_cookingtime = df_cookingtime.to_numpy()
-
-# fit the model
-k = 1300 # may be modified later
-kmeans_cookingtime = KMeans(n_clusters=k, init='k-means++', n_init='auto', tol=1e-4, random_state=540).fit(df_cookingtime) 
-
-# add the cluster labels to the DataFrame
-df['label_cooktime'] = kmeans_cookingtime.labels_
-print("finished.")
-
-print("Start k-means clustering on ingredients...", end='')
-# select the ingredient features and convert it to numpy
-df_ingredient = df[df.columns[5:]]
-df_ingredient = df_ingredient.to_numpy()
-
-# fit the model
-k = 1300 # may be modified later
-kmeans_ingredient = KMeans(n_clusters=k, init='k-means++', n_init='auto', tol=1e-4, random_state=540).fit(df_ingredient) 
-
-# add the cluster labels to the DataFrame
-df['label_ingredients'] = kmeans_ingredient.labels_
-print("finished.")
-
-# save the df in .csv format
-df.to_csv('../data/recipes_w_labels.csv', index=False)
+import numpy as np
+import os
 
 
+class RecipeCluster:
+    def __init__(self, recipes_file, reviews_file):
+        self.recipes_file = recipes_file
+        self.reviews_file = reviews_file
+
+    def read_files(self):
+        # Read recipe and review data from CSV files
+        print("Start reading files...", end='')
+        self.recipes_df = pd.read_csv(self.recipes_file)
+        self.reviews_df = pd.read_csv(self.reviews_file)
+        print("finished.")
+
+    def preprocess_data(self):
+        # Merge the recipes and reviews dataframes based on the recipe ID
+        self.df = pd.merge(self.reviews_df, self.recipes_df, on='RecipeId')
+
+        # Select relevant columns from the merged dataframe
+        features = ['RecipeId', 'AuthorId_y',
+                    'CookTime', 'PrepTime', 'TotalTime',
+                    'Calories', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent',
+                    'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent',
+                    ]
+        self.df = self.df[features]
+
+        # Remove duplicate rows
+        self.df = self.df[~self.df.duplicated()]
+
+        # Reset the index of the dataframe
+        self.df = self.df.reset_index(drop=True)
+
+        # Fill missing CookTime values with 0 seconds
+        self.df['CookTime'].fillna('PT0S', inplace=True)
+
+    def convert_time(self, s):
+        # Convert the time format to days and hours
+        time = s[2:s.find('H')]
+        if len(time) > 2:
+            days = int(time) // 24
+            hours = int(time) - days * 24
+            s = s.replace(time, str(days) + 'D' + str(hours))
+        return s
+
+    def convert_times(self):
+        # Convert CookTime, PrepTime, and TotalTime to seconds
+        print("Start time conversion...", end='')
+        self.df['CookTime'] = self.df['CookTime'].apply(lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
+        self.df['PrepTime'] = self.df['PrepTime'].apply(lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
+        self.df['TotalTime'] = self.df['TotalTime'].apply(
+            lambda x: pd.to_timedelta(self.convert_time(x)).total_seconds())
+        print("finished.")
+
+    def kmeans_clustering(self, k=1300):
+        # Perform k-means clustering on cooking time features
+        print("Start k-means clustering on cooking time...", end='')
+        df_cookingtime = self.df[self.df.columns[2:5]].to_numpy()
+        kmeans_cookingtime = KMeans(n_clusters=k, init='k-means++', n_init='auto', tol=1e-4, random_state=540).fit(
+            df_cookingtime)
+        self.df['label_cooktime'] = kmeans_cookingtime.labels_
+        print("finished.")
+
+        # Perform k-means clustering on ingredient features
+        print("Start k-means clustering on ingredients...", end='')
+        df_ingredient = self.df[self.df.columns[5:]].to_numpy()
+        kmeans_ingredient = KMeans(n_clusters=k, init='k-means++', n_init='auto', tol=1e-4, random_state=540).fit(
+            df_ingredient)
+        self.df['label_ingredients'] = kmeans_ingredient.labels_
+        print("finished.")
+
+    def save_data(self, output_file):
+        self.df.to_csv(output_file, index=False)
+
+
+def get_similar_recipes(user_id):
+    df = pd.read_csv('./data/recipes_w_labels.csv')
+
+    # Select the row with the specified user ID
+    row = df[df['AuthorId_y'] == user_id]
+
+    # Extract cooktime and ingredients labels
+    cooktime_label = row['label_cooktime'].values[0]
+    ingredients_label = row['label_ingredients'].values[0]
+
+    # Find recipes with matching cooktime and ingredients labels
+    similar_recipes = df[(df['label_cooktime'] == cooktime_label) & (df['label_ingredients'] == ingredients_label)]
+
+    # Return the recipe IDs of similar recipes
+    recipe_ids = similar_recipes['RecipeId'].values
+    return recipe_ids
+
+
+def generate_data():
+    recipes_file = '../data/recipes.csv'
+    reviews_file = '../data/reviews.csv'
+    output_file = '../data/recipes_w_labels.csv'
+    # Check if the output file already exists
+    if not os.path.exists(output_file):
+        recipe_cluster = RecipeCluster(recipes_file, reviews_file)
+        recipe_cluster.read_files()
+        recipe_cluster.preprocess_data()
+        recipe_cluster.convert_times()
+        recipe_cluster.kmeans_clustering()
+        recipe_cluster.save_data(output_file)
+    else:
+        print(f'{output_file} already exists. Skipping generation.')
+
+
+if __name__ == "__main__":
+    generate_data()

@@ -9,6 +9,8 @@ import numpy as np
 from torch.utils.data import random_split
 from torch.nn import MultiheadAttention
 
+from scripts.clustering import generate_data, get_similar_recipes
+
 
 class RecipeRecommendor:
 
@@ -23,7 +25,6 @@ class RecipeRecommendor:
         self.train_loader, self.valid_loader, self.train_dataset, self.val_dataset, self.saved_models_dir, self.device, self.batch_size = self.data.split()
         self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
         self.model = self.model.to(self.device)  # Send model to GPU if available
-
 
     def __train__(self):
         # Initialize the best validation loss to a large value
@@ -116,16 +117,7 @@ class RecipeRecommendor:
 if __name__ == "__main__":
     recipe_recommendor = RecipeRecommendor(RecipeDataset())
     test_userId = 1545
-    df = pd.read_csv('./data/recipes_w_labels.csv')
-    row = df[df['AuthorId_y'] == test_userId]
-    label_cooktime = row['label_cooktime'].values[0]
-    label_ingredients = row['label_ingredients'].values[0]
-    print(f'label_cooktime: {label_cooktime}, label_ingredients: {label_ingredients}')
-    alikeRecipes = df[df['label_cooktime'] == label_cooktime]
-    alikeRecipes = df[df['label_ingredients'] == label_ingredients]
-    print(f'number of alike recipes: {len(alikeRecipes)}')
-    test_recipeIds = np.array(alikeRecipes['RecipeId'])
-    ratings, recipe_ids = recipe_recommendor.__createrecommendations__(test_userId, test_recipeIds)
-    # ratings, recipe_ids = recipe_recommendor.__createrecommendations__(test_userId)
+    # generate_data()
+    ratings, recipe_ids = recipe_recommendor.__createrecommendations__(test_userId,  get_similar_recipes(test_userId))
     top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)[:10]]
     print(top_recipe_ids)

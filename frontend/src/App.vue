@@ -1,9 +1,9 @@
 <script setup>
-import { computed, reactive, ref, watch } from "vue";
-import { useRouter } from "vue-router";
-import { useQuery } from "@tanstack/vue-query";
+import {computed, reactive, ref} from "vue";
+import {useRouter} from "vue-router";
+import {useQuery} from "@tanstack/vue-query";
 import axios from "axios";
-import { ContentLoader } from "vue-content-loader";
+import {ContentLoader} from "vue-content-loader";
 
 const state = reactive({
   showModal: false,

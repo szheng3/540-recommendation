@@ -1,10 +1,9 @@
+import re
 from typing import Optional
 
-from fastapi import FastAPI
 import pandas as pd
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import re
-import torch
 
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor

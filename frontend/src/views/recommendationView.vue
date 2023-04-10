@@ -1,8 +1,8 @@
 <template></template>
 
 <script setup>
-import { ref } from "vue";
-import { useQuery } from "@tanstack/vue-query";
+import {ref} from "vue";
+import {useQuery} from "@tanstack/vue-query";
 import axios from "axios";
 
 const selectedCategory = ref("All");

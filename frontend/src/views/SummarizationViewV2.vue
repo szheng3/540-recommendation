@@ -24,8 +24,8 @@
 <!--});-->
 <!--</script>-->
 <script setup>
-import { usePostsV3 } from "@/stores/usePostsV3";
-import { useQuery } from "@tanstack/vue-query";
+import {usePostsV3} from "@/stores/usePostsV3";
+import {useQuery} from "@tanstack/vue-query";
 
 const store = usePostsV3();
 

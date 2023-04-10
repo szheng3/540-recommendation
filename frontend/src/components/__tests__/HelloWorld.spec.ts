@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import {describe, expect, it} from "vitest";
 
-import { mount } from "@vue/test-utils";
+import {mount} from "@vue/test-utils";
 import HelloWorld from "../HelloWorld.vue";
 
 describe("HelloWorld", () => {

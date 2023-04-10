@@ -1,10 +1,9 @@
 import pandas as pd
-from torch.utils.data import Dataset
-from sklearn.preprocessing import LabelEncoder
 import torch
-from torch.utils.data import random_split
-from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import LabelEncoder
+from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import random_split
+
 
 class RecipeDataset(Dataset):
     def __init__(self):

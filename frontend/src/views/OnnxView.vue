@@ -1,8 +1,8 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import {computed, ref, watch} from "vue";
 import axios from "axios";
-import { ContentLoader } from "vue-content-loader";
-import { notify } from "@kyvg/vue3-notification";
+import {ContentLoader} from "vue-content-loader";
+import {notify} from "@kyvg/vue3-notification";
 
 const myForm = ref(null);
 

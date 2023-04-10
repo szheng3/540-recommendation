@@ -1,5 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
-import SummarizationView from "@/views/SummarizationView.vue";
+import {createRouter, createWebHistory} from "vue-router";
 import OnnxView from "@/views/OnnxView.vue";
 import RecommendationView from "@/views/recommendationView.vue";
 

@@ -1,9 +1,9 @@
-import pandas as pd
 import ast
-import spacy
-import re
-import pickle
 import gzip
+import pickle
+import re
+
+import spacy
 
 nlp = spacy.load('en_core_web_sm')
 

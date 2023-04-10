@@ -1,6 +1,6 @@
-import { reactive, ref } from "vue";
-import { defineStore } from "pinia";
-import { useQuery } from "@tanstack/vue-query";
+import {reactive, ref} from "vue";
+import {defineStore} from "pinia";
+import {useQuery} from "@tanstack/vue-query";
 import axios from "axios";
 
 export const useRecommentation = defineStore("recommendation", () => {

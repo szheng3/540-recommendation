@@ -1,7 +1,7 @@
+import os
+
 import pandas as pd
 from sklearn.cluster import KMeans
-import numpy as np
-import os
 
 
 class RecipeCluster:

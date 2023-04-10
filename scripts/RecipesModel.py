@@ -1,8 +1,5 @@
-import pandas as pd
-import os
 import torch
-from torch.utils.data import random_split
-from torch.nn import MultiheadAttention
+
 
 class RecipeModel(torch.nn.Module):
     def __init__(self, num_recipes, num_authors, max_calories, max_review_counts, embedding_dim=16, num_heads=4):

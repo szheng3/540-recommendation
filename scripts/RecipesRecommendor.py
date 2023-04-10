@@ -1,15 +1,10 @@
-from scripts.RecipesData import RecipeDataset
 from scripts.RecipesModel import RecipeModel
-import pandas as pd
-from torch.utils.data import Dataset, DataLoader
-from sklearn.preprocessing import LabelEncoder
 import os
-import torch
-import numpy as np
-from torch.utils.data import random_split
-from torch.nn import MultiheadAttention
 
-from scripts.clustering import generate_data, get_similar_recipes
+import torch
+from torch.utils.data import DataLoader
+
+from scripts.RecipesModel import RecipeModel
 
 
 class RecipeRecommendor:

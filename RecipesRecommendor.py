@@ -22,6 +22,8 @@ class RecipeRecommendor:
 
         self.train_loader, self.valid_loader, self.train_dataset, self.val_dataset, self.saved_models_dir, self.device, self.batch_size = self.data.split()
         self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
+        self.model = self.model.to(self.device)  # Send model to GPU if available
+
 
     def __train__(self):
         # Initialize the best validation loss to a large value
@@ -72,7 +74,7 @@ class RecipeRecommendor:
 
     def __createrecommendations__(self, author_id, recipe_ids=None):
         # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
-        model = self.model.to(self.device)  # Send model to GPU if available
+        # model = self.model.to(self.device)  # Send model to GPU if available
 
         df = self.df
         if recipe_ids is None:
@@ -101,11 +103,11 @@ class RecipeRecommendor:
                                   recommendation_data]
         recommendation_loader = DataLoader(recommendation_dataset, batch_size=self.batch_size, shuffle=False)
         # Model evaluation
-        model.eval()
+        self.model.eval()
         with torch.no_grad():
             ratings = []
             for inputs in recommendation_loader:
-                rating = model(*inputs)
+                rating = self.model(*inputs)
                 ratings.extend(rating.detach().cpu().numpy())
 
         return ratings, recipe_ids

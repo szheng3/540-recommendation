@@ -3,6 +3,7 @@ import { computed, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
+import { ContentLoader } from "vue-content-loader";
 
 const state = reactive({
   showModal: false,
@@ -14,6 +15,8 @@ const state = reactive({
 });
 const {
   data: recipes = [],
+  isLoading: recipesLoading,
+  isFetching: recipesFetching,
   status,
   refetch,
 } = useQuery(["recipes"], async () => {
@@ -104,9 +107,9 @@ const login = () => {
 
         <v-spacer></v-spacer>
 
-        <v-responsive max-width="80">
-          <v-btn> Likes</v-btn>
-        </v-responsive>
+        <!--        <v-responsive max-width="80">-->
+        <!--          <v-btn> Likes</v-btn>-->
+        <!--        </v-responsive>-->
       </v-container>
     </v-app-bar>
     <notifications class="mt-10 mr-16" />
@@ -131,7 +134,21 @@ const login = () => {
         </v-card>
       </v-dialog>
       <v-container>
-        <v-row>
+        <v-sheet min-height="70vh" rounded="lg" v-if="recipesLoading">
+          <v-card variant="flat">
+            <v-card-text class="d-flex align-content-center justify-center">
+              <ContentLoader viewBox="0 0 820 450">
+                <rect x="10" y="10" rx="5" ry="5" width="260" height="140" />
+                <rect x="280" y="10" rx="5" ry="5" width="260" height="280" />
+                <rect x="550" y="10" rx="5" ry="5" width="260" height="140" />
+                <rect x="10" y="160" rx="5" ry="5" width="260" height="280" />
+                <rect x="280" y="300" rx="5" ry="5" width="260" height="140" />
+                <rect x="550" y="160" rx="5" ry="5" width="260" height="280" />
+              </ContentLoader>
+            </v-card-text>
+          </v-card>
+        </v-sheet>
+        <v-row v-else>
           <v-col cols="2">
             <v-sheet rounded="lg">
               <v-list rounded="lg">
@@ -155,7 +172,63 @@ const login = () => {
           </v-col>
 
           <v-col>
-            <v-sheet min-height="70vh" rounded="lg">
+            <v-sheet rounded="lg" v-if="recipesFetching">
+              <v-card variant="flat">
+                <v-card-text class="d-flex align-content-center justify-center">
+                  <ContentLoader viewBox="0 0 820 450">
+                    <rect
+                      x="10"
+                      y="10"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="140"
+                    />
+                    <rect
+                      x="280"
+                      y="10"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="280"
+                    />
+                    <rect
+                      x="550"
+                      y="10"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="140"
+                    />
+                    <rect
+                      x="10"
+                      y="160"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="280"
+                    />
+                    <rect
+                      x="280"
+                      y="300"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="140"
+                    />
+                    <rect
+                      x="550"
+                      y="160"
+                      rx="5"
+                      ry="5"
+                      width="260"
+                      height="280"
+                    />
+                  </ContentLoader>
+                </v-card-text>
+              </v-card>
+            </v-sheet>
+            <v-sheet min-height="70vh" rounded="lg" v-else>
               <v-container>
                 <v-row>
                   <v-col
@@ -179,7 +252,6 @@ const login = () => {
                         cover
                         height="250"
                         :src="item.first_image_url"
-                        lazy-src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
                       ></v-img>
 
                       <v-card-item>

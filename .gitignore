@@ -27,7 +27,6 @@ Temporary Items
 .apdisk
 
 .idea
-.data
+data
 */node_modules
-notebooks/data/recipes.parquet
-notebooks/data/reviews.parquet
+notebooks/data

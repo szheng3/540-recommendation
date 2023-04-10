@@ -17,7 +17,7 @@ class RecipeRecommendor:
                                  max_review_counts=max_review_count + 1)
 
         self.train_loader, self.valid_loader, self.train_dataset, self.val_dataset, self.saved_models_dir, self.device, self.batch_size = self.data.split()
-        # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
+        self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
         self.model = self.model.to(self.device)  # Send model to GPU if available
 
     def __train__(self):

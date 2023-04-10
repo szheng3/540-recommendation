@@ -4,6 +4,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from scripts.RecipesModel import RecipeModel
+import numpy as np
 
 
 class RecipeRecommendor:
@@ -113,3 +114,46 @@ class RecipeRecommendor:
                 rating = self.model(*inputs)
                 ratings.extend(rating.detach().cpu().numpy())
         return ratings, recipe_ids
+
+
+    def apk(self, actual, predicted, k=10):
+        if len(predicted) > k:
+            predicted = predicted[:k]
+
+        score = 0.0
+        num_hits = 0.0
+
+        for i, p in enumerate(predicted):
+            if p in actual and p not in predicted[:i]:
+                num_hits += 1.0
+                score += num_hits / (i + 1.0)
+
+        if not actual:
+            return 0.0
+
+        return score / min(len(actual), k)
+
+    def mapk(self, actual, predicted, k=10):
+        return np.mean([self.apk(a, p, k) for a, p in zip(actual, predicted)])
+
+    def evaluate_mapk(self, k_values):
+        mapk_scores = []
+
+        for k in k_values:
+            actual = []
+            predicted = []
+
+            with torch.no_grad():
+                for batch, targets in self.valid_loader:
+                    batch = [b.to(self.device) for b in batch]
+                    targets = targets.float().to(self.device)
+                    preds = self.model(*batch)
+
+                    actual.append(list(targets.detach().cpu().numpy()))
+                    predicted.append(list(np.argsort(-preds.detach().cpu().numpy())))
+
+            mapk_score = self.mapk(actual, predicted, k=k)
+            mapk_scores.append(mapk_score)
+            print(f"MAP@{k}: {mapk_score:.4f}")
+
+        return mapk_scores

@@ -81,8 +81,8 @@ async def get_top_10_popular(category: Optional[str] = None, userId: Optional[in
     sorted_data = filtered_data.sort_values('ReviewCount', ascending=False)
     if userId:
         # get the recommended recipe IDs and their corresponding ratings
-        # recipes_ids = get_similar_recipes(userId,
-        #                                   recipe_data.clustering_df)
+        recipes_ids = get_similar_recipes(user_id=userId,
+                                          df=recipe_data.clustering_df, category=category)
         # print(recipes_ids)
 
         ratings, recipe_ids = recipe_recommendor.__createrecommendations__(author_id=userId, category=category)

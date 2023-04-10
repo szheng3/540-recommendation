@@ -1,6 +1,5 @@
 from scripts.RecipesModel import RecipeModel
 import os
-
 import torch
 from torch.utils.data import DataLoader
 
@@ -18,7 +17,7 @@ class RecipeRecommendor:
                                  max_review_counts=max_review_count + 1)
 
         self.train_loader, self.valid_loader, self.train_dataset, self.val_dataset, self.saved_models_dir, self.device, self.batch_size = self.data.split()
-        self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
+        # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
         self.model = self.model.to(self.device)  # Send model to GPU if available
 
     def __train__(self):
@@ -68,7 +67,7 @@ class RecipeRecommendor:
                 print(f"Validation loss improved. Saving the model to {self.saved_models_dir}/best_model.pt")
                 torch.save(model.state_dict(), f"{self.saved_models_dir}/best_model.pt")
 
-    def __createrecommendations__(self, author_id, recipe_ids=None,category=None):
+    def __createrecommendations__(self, author_id, recipe_ids=None, category=None):
         # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
         # model = self.model.to(self.device)  # Send model to GPU if available
 
@@ -78,14 +77,17 @@ class RecipeRecommendor:
         else:
             df = df
 
+        print(df.head(10))
+        print(f"# of rows of df: {len(df)}")
         if recipe_ids is None:
             recipe_ids = df["RecipeId"].unique()[:1000]
         else:
-            recipe_ids = recipe_ids
-        user_has_ratings = author_id in df["AuthorId_y"].values
+            recipe_ids = list(set(recipe_ids))
+            
+        user_has_ratings = author_id in df["AuthorId_x"].values
 
         if user_has_ratings:
-            user_rated_recipe_ids = df[df["AuthorId_y"] == author_id]["RecipeId"].unique()
+            user_rated_recipe_ids = df[df["AuthorId_x"] == author_id]["RecipeId"].unique()
         else:
             user_rated_recipe_ids = []
 
@@ -93,9 +95,9 @@ class RecipeRecommendor:
         recommendation_data = []
         for recipe_id in recipe_ids:
             if not user_has_ratings or (user_has_ratings and recipe_id not in user_rated_recipe_ids):
-                recipe_id_transformed = self.data.item_encoder.transform([recipe_id])[0]
                 if not len(df[df["RecipeId"] == recipe_id]): continue
                 recipe_data = df[df["RecipeId"] == recipe_id].iloc[0]
+                recipe_id_transformed = self.data.item_encoder.transform([recipe_id])[0]
                 recommendation_data.append(
                     (recipe_id_transformed, author_id, recipe_data["Calories"], recipe_data["ReviewCount"]))
 
@@ -110,6 +112,4 @@ class RecipeRecommendor:
             for inputs in recommendation_loader:
                 rating = self.model(*inputs)
                 ratings.extend(rating.detach().cpu().numpy())
-
         return ratings, recipe_ids
-

@@ -7,6 +7,7 @@ import requests
 def fetchFiles():
     if not os.path.isfile("./data/recipes.csv"):
         # Download the file from S3 using requests library
+        print("Downloading data.zip...")
         local_file_path = os.path.join(os.getcwd(), 'data.zip')
         response = requests.get("https://szdataset.s3.us-east-2.amazonaws.com/data.zip")
         with open(local_file_path, 'wb') as f:

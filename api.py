@@ -16,11 +16,12 @@ from scripts.clustering import get_similar_recipes, generate_data
 app = FastAPI()
 
 data = []
+fetchFiles()
 
 
 def read_data():
-    fetchFiles()
     global recipes_df, reviews_df, recipe_data, recipe_recommendor
+    generate_data('./data')
     recipe_data = RecipeDataset()
     recipes_df = recipe_data.recipes_df
     reviews_df = recipe_data.reviews_df
@@ -117,6 +118,4 @@ static_dir = os.path.join(os.path.dirname(__file__), "dist")
 app.mount("/", StaticFiles(directory=static_dir,html=True), name="dist")
 
 if __name__ == "__main__":
-    fetchFiles()
-    generate_data('./data')
     uvicorn.run(app, host="127.0.0.1", port=8000)

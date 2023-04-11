@@ -80,7 +80,6 @@ class RecipeRecommendor:
         else:
             df = df
 
-        print(f"# of rows of df: {len(df)}")
         if recipe_ids is None:
             recipe_ids = df["RecipeId"].unique()[:1000]
         else:

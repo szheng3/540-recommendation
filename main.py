@@ -5,9 +5,6 @@ from scripts.clustering import get_similar_recipes, generate_data
 
 if __name__ == "__main__":
     fetchRecipes()
-    generate_data('./data')
-    data = RecipeDataset()
-    generate_data('./data')
     data = RecipeDataset()
 
     recipe_recommendor = RecipeRecommendor(data)

@@ -19,7 +19,7 @@ if __name__ == "__main__":
     test_userId = 1634
 
     # Set the recipe category to filter recommendations by
-    category = "Desserts"
+    category = "Dessert"
 
     # Get similar recipes for the test user based on their preferences and the specified category
     kmeans = get_similar_recipes(test_userId, data.clustering_df, category=category)

@@ -31,7 +31,6 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 |   `-- best_model.pt
 |-- scripts
 |   |-- FetchData.py         ----fetch data from s3 and unzip it
-|   |-- Recipes.py
 |   |-- RecipesData.py
 |   |-- RecipesModel.py
 |   |-- RecipesRecommendor.py

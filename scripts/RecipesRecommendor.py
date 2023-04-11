@@ -1,12 +1,10 @@
-from scripts.RecipesData import RecipeDataset
-from scripts.RecipesModel import RecipeModel
 import os
+
+import numpy as np
 import torch
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader
 
 from scripts.RecipesModel import RecipeModel
-import numpy as np
-import pandas as pd
 
 
 class RecipeRecommendor:

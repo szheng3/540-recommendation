@@ -1,18 +1,17 @@
+import os
 import re
 from typing import Optional
 
 import pandas as pd
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from scripts.FetchData import fetchFiles
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
 from scripts.clustering import get_similar_recipes, generate_data
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-import os
-import uvicorn
 
 app = FastAPI()
 

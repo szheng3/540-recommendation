@@ -1,6 +1,9 @@
 import os
-import requests
 import zipfile
+
+import requests
+
+
 def fetchFiles():
     if not os.path.isfile("./data/recipes.csv"):
         # Download the file from S3 using requests library

@@ -21,6 +21,14 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 
 ## Requirements
 See `requirements.txt`
+>pip3 install -r requirements.txt
+
+### Run the code
+>python3 main.py
+
+### Run the web demo
+>python3 api.py
+
 
 ## Model Training and Evaluation
 

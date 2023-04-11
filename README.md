@@ -22,22 +22,22 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 ## Project Structure
 ```
 .
-|-- data                     ----if there is no data, will fetch it from s3 after running main.py or api.py
+|-- data                      ----if there is no data, will fetch it from s3 after running main.py or api.py
 |-- notebooks      
 |   |-- recommendation-2-3.ipynb
 |   |-- recommendation.ipynb
 |   `-- test.ipynb
-|-- saved_models             ----best model will be saved here
+|-- saved_models              ----best model will be saved here
 |   `-- best_model.pt
 |-- scripts
-|   |-- FetchData.py         ----fetch data from s3 and unzip it
-|   |-- RecipesData.py
-|   |-- RecipesModel.py
-|   |-- RecipesRecommendor.py
-|   `-- clustering.py
+|   |-- FetchData.py          ----fetch data from s3 and unzip it
+|   |-- RecipesData.py        ----data processing and loading data to pytorch
+|   |-- RecipesModel.py       ----recommendation model here
+|   |-- RecipesRecommendor.py ----recommendation including training and evluation
+|   `-- clustering.py         ----kmeans clustering
 |-- README.md
-|-- api.py
-|-- main.py
+|-- api.py                    ----demo here run with python3 api.py 
+|-- main.py                   ----main app here to run with recommendation system
 `-- requirements.txt
 ```
 
@@ -51,6 +51,7 @@ See `requirements.txt`
 ### Run the web demo
 >python3 api.py
 
+open http://127.0.0.1:8000
 
 ## Model Training and Evaluation
 

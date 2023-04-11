@@ -19,6 +19,29 @@ The reviews dataset contains 1,401,982 reviews from 271,907 different users. Thi
 
 https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 
+## Project Structure
+```
+.
+|-- data                     ----if there is no data, will fetch it from s3 after running main.py or api.py
+|-- notebooks      
+|   |-- recommendation-2-3.ipynb
+|   |-- recommendation.ipynb
+|   `-- test.ipynb
+|-- saved_models             ----best model will be saved here
+|   `-- best_model.pt
+|-- scripts
+|   |-- FetchData.py         ----fetch data from s3 and unzip it
+|   |-- Recipes.py
+|   |-- RecipesData.py
+|   |-- RecipesModel.py
+|   |-- RecipesRecommendor.py
+|   `-- clustering.py
+|-- README.md
+|-- api.py
+|-- main.py
+`-- requirements.txt
+```
+
 ## Requirements
 See `requirements.txt`
 >pip3 install -r requirements.txt

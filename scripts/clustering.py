@@ -90,10 +90,9 @@ def get_similar_recipes(user_id, df, category=None):
 
     # Get the recipe IDs of similar recipes
     recipe_ids = similar_recipes['RecipeId'].values
-    print(f'len before dedup: {len(recipe_ids)}')
+    
     # Dedup
     recipe_ids_dedup = list(set(recipe_ids))
-    print(f'len after dedup: {len(recipe_ids_dedup)}')
     return recipe_ids_dedup
 
 

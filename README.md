@@ -22,7 +22,8 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 ## Project Structure
 ```
 .
-|-- data                      ----store automatically fetched data
+|-- dist (Optional)           ----store temporary files when running api
+|-- data (Optional)           ----store automatically fetched data
 |-- notebooks      
 |   |-- recommendation-2-3.ipynb
 |   |-- recommendation.ipynb

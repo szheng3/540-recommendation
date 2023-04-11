@@ -85,7 +85,8 @@ async def get_top_10_popular(category: Optional[str] = None, userId: Optional[in
                                           df=recipe_data.clustering_df, category=category)
         # print(recipes_ids)
 
-        ratings, recipe_ids = recipe_recommendor.__createrecommendations__(author_id=userId, category=category)
+        ratings, recipe_ids = recipe_recommendor.__createrecommendations__(author_id=userId, recipe_ids=recipes_ids,
+                                                                           category=category)
 
         # sort the recipe IDs in descending order of their ratings
         top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)]

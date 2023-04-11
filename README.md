@@ -36,7 +36,7 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 |   |-- RecipesRecommendor.py ----recommendation including training and evluation
 |   `-- clustering.py         ----kmeans clustering
 |-- README.md
-|-- api.py                    ----demo here run with python3 api.py 
+|-- api.py                    ----web demo here run with python3 api.py 
 |-- main.py                   ----main app here to run with recommendation system
 `-- requirements.txt
 ```

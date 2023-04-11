@@ -22,7 +22,7 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 ## Project Structure
 ```
 .
-|-- data                      ----if there is no data, will fetch it from s3 after running main.py or api.py
+|-- data                      ----store automatically fetched data
 |-- notebooks      
 |   |-- recommendation-2-3.ipynb
 |   |-- recommendation.ipynb
@@ -31,13 +31,13 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 |   `-- best_model.pt
 |-- scripts
 |   |-- FetchData.py          ----fetch data from s3 and unzip it
-|   |-- RecipesData.py        ----data processing and loading data to pytorch
-|   |-- RecipesModel.py       ----recommendation models here
-|   |-- RecipesRecommendor.py ----recommendation models to run train or evaluation to get best 6 from 1000 recipes
-|   `-- clustering.py         ----kmeans clustering to output most close 1000 recipes from millions recipes
+|   |-- RecipesData.py        ----data processing and loading
+|   |-- RecipesModel.py       ----recommendation models
+|   |-- RecipesRecommendor.py ----recommendation models training & evaluation to get final recommendations
+|   `-- clustering.py         ----k-means clustering to group recipes by their cooking time and ingredients for recommendation dataset construction
 |-- README.md
-|-- api.py                    ----web demo here run with python3 api.py 
-|-- main.py                   ----main app here to run with recommendation system
+|-- api.py                    ----web demo script
+|-- main.py                   ----main function
 `-- requirements.txt
 ```
 
@@ -53,9 +53,11 @@ See `requirements.txt`
 
 open http://127.0.0.1:8000
 
-## Model Training and Evaluation
+## Architecture Diagram
+![model architecture diagram](https://user-images.githubusercontent.com/50161537/231304318-7c07c38b-74b0-4ffb-8131-d6dd7bacdc49.png)
 
-### Content-based recommendor system
+## Content-based Recipe Recommendation Model 
+### Model Overview 
 This is a content-based recipe recommender system. It generates recommendations based on the features of recipes (i.e., recipe ID, author ID, number of calories, and number of reviews).
 
 The model is trained using the mean squared error loss function and the Adam optimizer. The training data is split into training and validation datasets, and the model is trained for 10 epochs. The best performing model is saved and later used for generating recommendations.
@@ -64,9 +66,23 @@ To generate recommendations, the model is loaded, and the predicted ratings are 
 
 One thing to note is that the model is a neural network model with embeddings and a multi-head attention layer, which are commonly used in natural language processing tasks. The model takes in non-sequential input features, and the attention mechanism is used to focus on relevant features and capture interactions between them.
 
-### Neural Network
+### MultiHead Attention Model Architecture Details
+- Inputs: recipe ID, author ID, number of calories, and # of reviews
+- Embedding layers 
+  - Convert inputs to embedding vectors and combine them into single vector
+- Multi-head attention layer 
+  - Helps model focus on different parts of input
 
-This code defines a neural network model for a recipe recommender system. The model takes in four inputs: the recipe ID, the author ID, the number of calories, and the number of reviews for a recipe. The model converts each of these inputs into a lower-dimensional representation called an "embedding". These embeddings are then combined into a single vector and passed through a "multi-head attention" layer that helps the model focus on different parts of the input. Finally, the vector is passed through two fully connected layers and a sigmoid activation function to produce a predicted rating for the recipe.
+- 2 fully connected layers
+
+- Sigmoid activation function 
+
+
+### Training and Evaluation
+- Use mean squared error (MSE) loss function and Adam optimizer.
+- Train dataset : Validation dataset = 8:2
+- Number of Epochs = 100
+- Model with best performance saved for final recommendation generation 
 
 ## Results
 ![image](https://user-images.githubusercontent.com/50161537/231260130-1bb17a5c-e53c-4e48-901c-7a15dd9de562.jpeg)
@@ -86,3 +102,4 @@ The MAP@1 score of 0.1321 suggests that the model performs reasonably well in id
 This is a Vue.js application that displays recipe recommendations based on user selections. The application uses the vue-router library to manage navigation and has a main app bar at the top of the page. The app bar contains a Log In button that opens a modal where the user can select their username from a dropdown menu. The app retrieves recipe data from an API using the @tanstack/vue-query library and displays it in a grid of recipe cards. The user can filter the recipe results by category by clicking on a category in the left-hand sidebar. The footer of the page provides information about the project and its developers.
 
 ## References
+- https://www.psu.edu/news/research/story/study-suggests-us-households-waste-nearly-third-food-they-acquire/

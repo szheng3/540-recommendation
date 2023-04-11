@@ -83,7 +83,10 @@ class RecipeRecommendor:
         if recipe_ids is None:
             recipe_ids = df["RecipeId"].unique()[:1000]
         else:
-            recipe_ids = recipe_ids
+            if len(recipe_ids) > 1000:
+                recipe_ids = recipe_ids[:1000]
+            else:
+                recipe_ids = recipe_ids
             
         user_has_ratings = author_id in df["AuthorId_x"].values
 

@@ -86,7 +86,10 @@ def get_similar_recipes(user_id, df, category=None):
     similar_recipes = df[(df['label_cooktime'] == cooktime_label) & (df['label_ingredients'] == ingredients_label)]
 
     # Find recipes with matching category if applicable
-    similar_recipes = df[(df['RecipeCategory'] == category)]
+    if category:
+        similar_recipes = df[(df['RecipeCategory'] == category)]
+    else:
+        similar_recipes = df
 
     # Get the recipe IDs of similar recipes
     recipe_ids = similar_recipes['RecipeId'].values

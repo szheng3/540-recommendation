@@ -5,6 +5,7 @@ import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from scripts.FetchData import fetchRecipes
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
 from scripts.clustering import get_similar_recipes, generate_data
@@ -15,6 +16,7 @@ data = []
 
 
 def read_data():
+    fetchRecipes()
     generate_data('./data')
     global recipes_df, reviews_df, recipe_data, recipe_recommendor
     recipe_data = RecipeDataset()
@@ -80,11 +82,11 @@ async def get_top_10_popular(category: Optional[str] = None, userId: Optional[in
 
     sorted_data = filtered_data.sort_values('ReviewCount', ascending=False)
     if userId:
+        recipes_ids=None
         # get the recommended recipe IDs and their corresponding ratings
-        recipes_ids = get_similar_recipes(user_id=userId,
-                                          df=recipe_data.clustering_df, category=category)
+        # recipes_ids = get_similar_recipes(user_id=userId,
+        #                                   df=recipe_data.clustering_df, category=category)
         # print(recipes_ids)
-
         ratings, recipe_ids = recipe_recommendor.__createrecommendations__(author_id=userId, recipe_ids=recipes_ids,
                                                                            category=category)
 

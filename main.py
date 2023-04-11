@@ -1,8 +1,12 @@
+from scripts.FetchData import fetchRecipes
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
 from scripts.clustering import get_similar_recipes, generate_data
 
 if __name__ == "__main__":
+    fetchRecipes()
+    generate_data('./data')
+    data = RecipeDataset()
     generate_data('./data')
     data = RecipeDataset()
 

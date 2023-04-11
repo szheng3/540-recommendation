@@ -38,6 +38,8 @@ One thing to note is that the model is a neural network model with embeddings an
 This code defines a neural network model for a recipe recommender system. The model takes in four inputs: the recipe ID, the author ID, the number of calories, and the number of reviews for a recipe. The model converts each of these inputs into a lower-dimensional representation called an "embedding". These embeddings are then combined into a single vector and passed through a "multi-head attention" layer that helps the model focus on different parts of the input. Finally, the vector is passed through two fully connected layers and a sigmoid activation function to produce a predicted rating for the recipe.
 
 ## Results
+![image](https://user-images.githubusercontent.com/50161537/231260130-1bb17a5c-e53c-4e48-901c-7a15dd9de562.jpeg)
+
 
 ## Application
 

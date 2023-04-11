@@ -57,4 +57,3 @@ if __name__ == "__main__":
   #        'cheese','vinegar']
   my_ing = ['winter squash', 'mixed spice', 'honey', 'butter', 'olive oil', 'salt']
   #print(recipes.getRecipesByIngredients(my_ing))
-  print(recipes.getRecipes())

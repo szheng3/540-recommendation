@@ -40,7 +40,6 @@ class RecipeRecommendor:
             model.train()
             train_loss = 0
             for batch, targets in self.train_loader:
-                print(batch,targets)
                 optimizer.zero_grad()
                 batch = [b.to(self.device) for b in batch]
                 targets = targets.float().to(self.device)
@@ -81,7 +80,6 @@ class RecipeRecommendor:
         else:
             df = df
 
-        print(df.head(10))
         print(f"# of rows of df: {len(df)}")
         if recipe_ids is None:
             recipe_ids = df["RecipeId"].unique()[:1000]

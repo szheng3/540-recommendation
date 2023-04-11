@@ -16,6 +16,6 @@ if __name__ == "__main__":
     top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)[:10]] if len(ratings) > 0 else recipe_ids[:10]
     print(top_recipe_ids)
 
-    # k_values = [1, 3, 5, 10]
-    # mapk_scores = recipe_recommendor.evaluate_mapk(k_values)
-    # print(mapk_scores)
+    k_values = [1, 3, 5, 10]
+    mapk_scores = recipe_recommendor.evaluate_mapk(k_values)
+    print(mapk_scores)

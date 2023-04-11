@@ -58,7 +58,6 @@ class RecipeDataset(Dataset):
         train_dataset, val_dataset = random_split(self, [train_size, val_size])
         batch_size = 32
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-        print("train_loader", train_loader)
         valid_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
         saved_models_dir = './saved_models'
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

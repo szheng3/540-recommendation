@@ -1,9 +1,8 @@
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
-from scripts.clustering import get_similar_recipes, generate_data
+from scripts.clustering import get_similar_recipes
 
 if __name__ == "__main__":
-    generate_data('./data')
     data = RecipeDataset()
 
     recipe_recommendor = RecipeRecommendor(data)

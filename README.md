@@ -20,11 +20,7 @@ The reviews dataset contains 1,401,982 reviews from 271,907 different users. Thi
 https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 
 ## Requirements
-`PyTorch`
-
-`pandas`
-
-`scikit-learn`
+See `requirements.txt`
 
 ## Model Training and Evaluation
 

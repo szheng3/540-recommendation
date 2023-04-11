@@ -18,7 +18,7 @@ app = FastAPI()
 data = []
 fetchFiles()
 
-
+# Function to read data from the RecipeDataset
 def read_data():
     global recipes_df, reviews_df, recipe_data, recipe_recommendor
     generate_data('./data')
@@ -28,11 +28,8 @@ def read_data():
 
     recipe_recommendor = RecipeRecommendor(recipe_data)
 
-    # read recipes.parquet file
-    # recipes_df = pd.read_parquet('data/recipes.parquet')
-    # data = pd.merge(reviews_df, recipes_df, on='RecipeId')
 
-
+# Read data on application startup
 @app.on_event("startup")
 async def startup_event():
     read_data()
@@ -46,13 +43,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# Endpoint to get top categories
 @app.get('/top_categories')
 async def get_top_categories():
     top_categories = recipes_df['RecipeCategory'].value_counts().head(10).index.tolist()
     return {'top_categories': top_categories}
 
-
+# Endpoint to get top authors
 @app.get('/author')
 async def get_author():
     top_authors = reviews_df[["AuthorId", "AuthorName"]].drop_duplicates().head(10)
@@ -60,7 +57,7 @@ async def get_author():
 
     return {'top_authors': top_authors_list}
 
-
+# Endpoint to get top 10 popular recipes based on category and/or user ID
 @app.get("/recipes")
 async def get_top_10_popular(category: Optional[str] = None, userId: Optional[int] = None):
     # Filter by category if provided

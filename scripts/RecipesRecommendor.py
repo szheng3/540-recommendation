@@ -7,8 +7,9 @@ from torch.utils.data import DataLoader
 from scripts.RecipesModel import RecipeModel
 
 
-class RecipeRecommendor:
 
+class RecipeRecommendor:
+    # - `__init__`: Initializes the class with the given data, creating a `RecipeModel` instance and loading the pre-trained model.
     def __init__(self, data):
         self.data = data
         max_calories, max_review_count, self.df = self.data.__getmaxcaloriesandreviewcount__()
@@ -21,6 +22,7 @@ class RecipeRecommendor:
         self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt", map_location=self.device))
         self.model = self.model.to(self.device)  # Send model to GPU if available
 
+    # - `__train__`: Trains the recommendation model using the given data.
     def __train__(self):
         # Initialize the best validation loss to a large value
         best_valid_loss = float('inf')
@@ -68,6 +70,7 @@ class RecipeRecommendor:
                 print(f"Validation loss improved. Saving the model to {self.saved_models_dir}/best_model.pt")
                 torch.save(model.state_dict(), f"{self.saved_models_dir}/best_model.pt")
 
+    # - `__createrecommendations__`: Creates recommendations for the given author_id, recipe_ids, and category (if provided).
     def __createrecommendations__(self, author_id, recipe_ids=None, category=None):
         # self.model.load_state_dict(torch.load(f"{self.saved_models_dir}/best_model.pt",map_location=self.device))
         # model = self.model.to(self.device)  # Send model to GPU if available
@@ -116,7 +119,7 @@ class RecipeRecommendor:
                 ratings.extend(rating.detach().cpu().numpy())
         return ratings, recipe_ids
 
-
+    # - `apk`: Calculates the average precision at k for a single user's recommendations.
     def apk(self, actual, predicted, k=10):
         if len(predicted) > k:
             predicted = predicted[:k]
@@ -134,9 +137,11 @@ class RecipeRecommendor:
 
         return score / min(len(actual), k)
 
+    # - `mapk`: Calculates the mean average precision at k for a list of actual and predicted rankings.
     def mapk(self, actual, predicted, k=10):
         return np.mean([self.apk(a, p, k) for a, p in zip(actual, predicted)])
 
+    # - `evaluate_mapk`: Evaluates the model's mean average precision at k using different k_values.
     def evaluate_mapk(self, k_values):
         mapk_scores = []
 

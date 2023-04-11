@@ -32,9 +32,9 @@ https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews
 |-- scripts
 |   |-- FetchData.py          ----fetch data from s3 and unzip it
 |   |-- RecipesData.py        ----data processing and loading data to pytorch
-|   |-- RecipesModel.py       ----recommendation model here
-|   |-- RecipesRecommendor.py ----recommendation including training and evluation
-|   `-- clustering.py         ----kmeans clustering
+|   |-- RecipesModel.py       ----recommendation models here
+|   |-- RecipesRecommendor.py ----recommendation models to run train or evaluation to get best 6 from 1000 recipes
+|   `-- clustering.py         ----kmeans clustering to output most close 1000 recipes from millions recipes
 |-- README.md
 |-- api.py                    ----web demo here run with python3 api.py 
 |-- main.py                   ----main app here to run with recommendation system

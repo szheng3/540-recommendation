@@ -1,16 +1,16 @@
-from scripts.FetchData import fetchRecipes
+from scripts.FetchData import fetchFiles
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
 from scripts.clustering import get_similar_recipes, generate_data
 
 if __name__ == "__main__":
-    fetchRecipes()
+    fetchFiles()
     data = RecipeDataset()
 
     recipe_recommendor = RecipeRecommendor(data)
     # test_userId = 1545
     test_userId = 1634
-    category = None
+    category = "Desserts"
     kmeans = get_similar_recipes(test_userId,
                                  data.clustering_df,
                                  category=category)

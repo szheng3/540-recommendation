@@ -5,10 +5,14 @@ import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from scripts.FetchData import fetchRecipes
+from scripts.FetchData import fetchFiles
 from scripts.RecipesData import RecipeDataset
 from scripts.RecipesRecommendor import RecipeRecommendor
 from scripts.clustering import get_similar_recipes, generate_data
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+import os
+import uvicorn
 
 app = FastAPI()
 
@@ -16,8 +20,7 @@ data = []
 
 
 def read_data():
-    fetchRecipes()
-    generate_data('./data')
+    fetchFiles()
     global recipes_df, reviews_df, recipe_data, recipe_recommendor
     recipe_data = RecipeDataset()
     recipes_df = recipe_data.recipes_df
@@ -110,3 +113,11 @@ async def get_top_10_popular(category: Optional[str] = None, userId: Optional[in
 
         # Return the top 10 rows as a list of dictionaries
         return top_10.to_dict(orient='records')
+
+static_dir = os.path.join(os.path.dirname(__file__), "dist")
+app.mount("/", StaticFiles(directory=static_dir,html=True), name="dist")
+
+if __name__ == "__main__":
+    fetchFiles()
+    generate_data('./data')
+    uvicorn.run(app, host="127.0.0.1", port=8000)

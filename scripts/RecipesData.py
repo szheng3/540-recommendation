@@ -26,7 +26,6 @@ class RecipeDataset(Dataset):
         clustering_df = generate_data('./data')
         clustering_df = clustering_df[['RecipeId', 'label_cooktime', 'label_ingredients']]
         self.clustering_df = pd.merge(self.data, clustering_df, on='RecipeId')
-        print(self.clustering_df.head(10))
 
     def __len__(self):
         return len(self.recipe_ids)
@@ -54,11 +53,12 @@ class RecipeDataset(Dataset):
 
     def split(self):
         # Split the dataset into training and validation sets
-        train_size = int(0.8 * len(self.data))
+        train_size = int(0.8 * len(self))
         val_size = len(self.data) - train_size
-        train_dataset, val_dataset = random_split(self.data, [train_size, val_size])
+        train_dataset, val_dataset = random_split(self, [train_size, val_size])
         batch_size = 32
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        print("train_loader", train_loader)
         valid_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
         saved_models_dir = './saved_models'
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

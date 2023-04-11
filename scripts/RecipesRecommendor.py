@@ -1,10 +1,12 @@
+from scripts.RecipesData import RecipeDataset
 from scripts.RecipesModel import RecipeModel
 import os
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 
 from scripts.RecipesModel import RecipeModel
 import numpy as np
+import pandas as pd
 
 
 class RecipeRecommendor:
@@ -38,6 +40,7 @@ class RecipeRecommendor:
             model.train()
             train_loss = 0
             for batch, targets in self.train_loader:
+                print(batch,targets)
                 optimizer.zero_grad()
                 batch = [b.to(self.device) for b in batch]
                 targets = targets.float().to(self.device)

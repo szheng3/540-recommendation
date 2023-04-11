@@ -54,6 +54,7 @@ See `requirements.txt`
 open http://127.0.0.1:8000
 
 ## Architecture Diagram
+![model architecture diagram](https://user-images.githubusercontent.com/50161537/231304318-7c07c38b-74b0-4ffb-8131-d6dd7bacdc49.png)
 
 ## Content-based Recipe Recommendation Model 
 ### Model Overview 

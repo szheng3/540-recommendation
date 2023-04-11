@@ -49,6 +49,7 @@ class RecipeDataset(Dataset):
         # Calculate the maximum values for Calories and ReviewCount
         max_calories = int(df["Calories"].max())
         max_review_count = int(df["ReviewCount"].max())
+        df = df.sort_values('ReviewCount', ascending=False)
         return max_calories, max_review_count, df
 
     def split(self):

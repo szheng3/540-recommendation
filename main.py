@@ -14,7 +14,7 @@ if __name__ == "__main__":
                                                                        category="Dessert")
 
     top_recipe_ids = [recipe_ids[i] for i in sorted(range(len(ratings)), key=lambda i: ratings[i], reverse=True)[:10]] if len(ratings) > 0 else recipe_ids[:10]
-    print("top recipe ids: "+top_recipe_ids+" for user: "+test_userId)
+    print("top recipe ids: "+str(top_recipe_ids)+" for user: "+test_userId)
 
     k_values = [1, 3, 5, 10]
     mapk_scores = recipe_recommendor.evaluate_mapk(k_values)
